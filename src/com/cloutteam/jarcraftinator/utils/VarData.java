@@ -1,7 +1,9 @@
 package com.cloutteam.jarcraftinator.utils;
 
-import java.io.DataInputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VarData {
 
@@ -17,11 +19,51 @@ public class VarData {
         return i;
     }
 
+    public static void writeVarInt(DataOutputStream out, int paramInt) throws IOException {
+        while (true) {
+            if ((paramInt & 0xFFFFFF80) == 0) {
+                out.writeByte(paramInt);
+                return;
+            }
+
+            out.writeByte(paramInt & 0x7F | 0x80);
+            paramInt >>>= 7;
+        }
+    }
+
     public static String readVarString(DataInputStream in, int size) throws IOException {
         String result = "";
         for(int i = 0; i < size; i++){
             result += (char) in.readByte();
         }
+        return result;
+    }
+
+    public static void writeVarString(DataOutputStream out, String string) throws IOException {
+        writeVarInt(out, string.length());
+        out.writeUTF(string);
+    }
+
+    public static byte[] getVarInt(int paramInt) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        while (true) {
+            if ((paramInt & 0xFFFFFF80) == 0) {
+                out.write((byte)paramInt);
+                return out.toByteArray();
+            }
+
+            out.write(paramInt & 0x7F | 0x80);
+            paramInt >>>= 7;
+        }
+    }
+
+    public static byte[] packString(String string) throws IOException {
+        byte[] str = string.getBytes("UTF-8");
+        byte[] len = getVarInt(str.length);
+
+        byte[] result = new byte[len.length + str.length];
+        System.arraycopy(len, 0, result, 0, len.length);
+        System.arraycopy(str, 0, result, 0, str.length);
         return result;
     }
 
