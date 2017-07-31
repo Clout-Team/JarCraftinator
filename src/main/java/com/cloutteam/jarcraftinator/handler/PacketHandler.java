@@ -5,24 +5,26 @@ import com.cloutteam.jarcraftinator.api.cloutteam.samjakob.ChatColor;
 import com.cloutteam.jarcraftinator.utils.QuickJSON;
 import com.cloutteam.jarcraftinator.utils.VarData;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
-import java.io.*;
-import java.net.HttpURLConnection;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
-import java.net.URL;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.util.Arrays;
 import java.util.UUID;
 
 public class PacketHandler extends Thread {
 
+    // Connection
     private Socket clientSocket;
     private boolean connected;
     private int state;
-    private byte[] privateKey;
+    private PrivateKey privateKey;
+    // Player
     private String playerName;
 
     public PacketHandler(Socket socket){
@@ -123,40 +125,6 @@ public class PacketHandler extends Thread {
                         playerName = VarData.readVarString(stream, VarData.readVarInt(stream));
                         JARCraftinator.log("Player attempting login: " + playerName);
 
-                        // Generate encryption data
-                        byte[] serverid = VarData.packString("");
-                        byte[] publickey = getPublicKey();
-                        byte[] publicKeyLength = VarData.getVarInt(publickey.length);
-                        byte[] verifyTokenLength = VarData.getVarInt(4);
-                        byte[] verifyToken = new byte[4];
-                        verifyToken[0] = 6;
-                        verifyToken[1] = 9;
-                        verifyToken[2] = 6;
-                        verifyToken[3] = 9;
-                        // Packet headers
-                        VarData.writeVarInt(output, VarData.getVarInt(0x01).length + serverid.length + publicKeyLength.length + publickey.length + verifyTokenLength.length + verifyToken.length);
-                        VarData.writeVarInt(output, 0x01);
-                        // Write packet data
-                        output.write(serverid);
-                        output.write(publicKeyLength);
-                        output.write(publickey);
-                        output.write(verifyTokenLength);
-                        output.write(verifyToken);
-
-                        wasHandled = true;
-                    }
-
-                    /* ENCRYPTION RESPONSE */
-                    if(packetID == PacketType.ENCRYPTION_RESPONSE && state == 2){
-                        JARCraftinator.log("Recieved encryption response from " + playerName);
-                        int sslength = VarData.readVarInt(stream);
-                        byte[] ss = new byte[sslength];
-                        stream.read(ss, 0, sslength);
-
-                        int vtlength = VarData.readVarInt(stream);
-                        byte[] vt = new byte[vtlength];
-                        stream.read(vt, 0, vtlength);
-
                         /* NOW RESPOND WITH LOGIN SUCCESS */
                         byte[] uuid = VarData.packString(getUUID(playerName));
                         byte[] username = VarData.packString(playerName);
@@ -180,13 +148,6 @@ public class PacketHandler extends Thread {
                         output.write(biome);     // Level type
                         output.write(0x00); //size: 1 - reduced debug info
 
-                        System.out.println("debug1");
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
                         /* SEND HOME POSITION */
                         int x = 0;
                         int y = 5;
@@ -197,13 +158,7 @@ public class PacketHandler extends Thread {
                         output.writeLong(position);
                         output.writeLong(y);
                         output.writeLong(z);
-
-                        System.out.println("debug2");
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        output.flush();
 
                         /* SEND PLAYER ABILITIES */
                         VarData.writeVarInt(output, 9 + VarData.getVarInt(0x2B).length);
@@ -211,6 +166,9 @@ public class PacketHandler extends Thread {
                         output.writeByte(0x08);
                         output.writeFloat(1);
                         output.writeFloat(0);
+                        output.flush();
+
+                        wasHandled = true;
 
                         wasHandled = true;
                     }
@@ -254,7 +212,7 @@ public class PacketHandler extends Thread {
             KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
             generator.initialize(512);
             KeyPair keys = generator.generateKeyPair();
-            privateKey = keys.getPrivate().getEncoded();
+            privateKey = keys.getPrivate();
             return keys.getPublic().getEncoded();
         }catch(NoSuchAlgorithmException ex){
             System.out.println("Error generating RSA key for player.");

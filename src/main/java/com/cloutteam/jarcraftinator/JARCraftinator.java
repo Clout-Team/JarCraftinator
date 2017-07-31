@@ -1,15 +1,16 @@
 package com.cloutteam.jarcraftinator;
 
-import com.churcherscollege.yamlconfiguration.FileConfiguration;
+import com.cloutteam.jarcraftinator.config.FileConfiguration;
 import com.cloutteam.jarcraftinator.handler.PacketHandler;
-import com.sun.security.ntlm.Server;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 public class JARCraftinator {
 
