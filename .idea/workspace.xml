@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="03e0f98d-790c-43cf-bbeb-d2f83a6d8cb3" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/cloutteam/jarcraftinator/handler/PacketHandler.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/cloutteam/jarcraftinator/packet/PacketType.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/cloutteam/jarcraftinator/JARCraftinator.java" afterPath="$PROJECT_DIR$/src/com/cloutteam/jarcraftinator/JARCraftinator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/cloutteam/jarcraftinator/utils/VarData.java" afterPath="$PROJECT_DIR$/src/com/cloutteam/jarcraftinator/utils/VarData.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -21,8 +17,8 @@
       <file leaf-file-name="JARCraftinator.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/cloutteam/jarcraftinator/JARCraftinator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="663">
-              <caret line="39" column="21" lean-forward="false" selection-start-line="39" selection-start-column="21" selection-end-line="39" selection-end-column="21" />
+            <state relative-caret-position="527">
+              <caret line="71" column="52" lean-forward="true" selection-start-line="71" selection-start-column="52" selection-end-line="71" selection-end-column="52" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -33,7 +29,7 @@
       <file leaf-file-name="PacketHandler.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/cloutteam/jarcraftinator/handler/PacketHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="214">
+            <state relative-caret-position="183">
               <caret line="105" column="57" lean-forward="false" selection-start-line="105" selection-start-column="57" selection-end-line="105" selection-end-column="57" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -446,7 +442,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/cloutteam/jarcraftinator/handler/PacketHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="214">
+        <state relative-caret-position="183">
           <caret line="105" column="57" lean-forward="false" selection-start-line="105" selection-start-column="57" selection-end-line="105" selection-end-column="57" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -460,8 +456,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/cloutteam/jarcraftinator/JARCraftinator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="663">
-          <caret line="39" column="21" lean-forward="false" selection-start-line="39" selection-start-column="21" selection-end-line="39" selection-end-column="21" />
+        <state relative-caret-position="527">
+          <caret line="71" column="52" lean-forward="true" selection-start-line="71" selection-start-column="52" selection-end-line="71" selection-end-column="52" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

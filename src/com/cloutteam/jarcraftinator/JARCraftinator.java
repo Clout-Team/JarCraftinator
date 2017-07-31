@@ -16,6 +16,11 @@ public class JARCraftinator {
     private static boolean running = true;
 
     public static void main(String[] args){
+        System.out.println("Welcome to JARCraftinator.");
+        System.out.println("JARCraftinator is a Clout Team project");
+        System.out.println("https://wwww.clout-team.com/");
+        System.out.println();
+        System.out.println("Starting server...");
         packetHandlerList = new HashMap<>();
 
         // Start the server thread
@@ -44,9 +49,12 @@ public class JARCraftinator {
             }
         });
         serverThread.start();
+        System.out.println("Server ready and listening.");
 
+        System.out.println("Starting CLI...");
         // Now start the CLI
         Scanner scanner = new Scanner(System.in);
+        System.out.println("CLI ready!");
         while(running){
             String command = scanner.nextLine();
 
@@ -60,6 +68,8 @@ public class JARCraftinator {
                 running = false;
                 System.out.println("Thanks for using JARCraftinator :)");
                 System.exit(0);
+            }else{
+                System.out.println("Unknown command.");
             }
         }
 
