@@ -1,5 +1,6 @@
 package com.cloutteam.jarcraftinator;
 
+import com.churcherscollege.yamlconfiguration.FileConfiguration;
 import com.cloutteam.jarcraftinator.handler.PacketHandler;
 import com.sun.security.ntlm.Server;
 
@@ -12,14 +13,24 @@ import java.util.*;
 
 public class JARCraftinator {
 
-    private static Map<InetAddress, PacketHandler> packetHandlerList;
+    private static Map<String, PacketHandler> packetHandlerList;
     private static boolean running = true;
+    private static FileConfiguration config;
 
     public static void main(String[] args){
         System.out.println("Welcome to JARCraftinator.");
         System.out.println("JARCraftinator is a Clout Team project");
         System.out.println("https://wwww.clout-team.com/");
         System.out.println();
+        System.out.println("Loading settings...");
+        try {
+            config = new FileConfiguration("server.yml");
+            config.saveDefaultConfig(JARCraftinator.class.getResourceAsStream("config/server.yml"));
+            config.loadConfig();
+            System.out.println("Loaded settings.");
+        }catch(IOException ex){
+            System.out.println("Unable load server properties. Please double-check your syntax (remember: no tabs in a YAML file, only spaces).");
+        }
         System.out.println("Starting server...");
         packetHandlerList = new HashMap<>();
 
@@ -37,10 +48,10 @@ public class JARCraftinator {
             while(true) {
                 try {
                     Socket clientSocket = serverSocket.accept();
-                    if((!packetHandlerList.keySet().contains(clientSocket.getInetAddress())) || packetHandlerList.get(clientSocket.getInetAddress()).isDisconnected()) {
+                    if((!packetHandlerList.keySet().contains(clientSocket.getInetAddress().toString() + ":" + clientSocket.getPort())) || packetHandlerList.get(clientSocket.getInetAddress().toString() + ":" + clientSocket.getPort()).isDisconnected()) {
                         log("Registered new handler for " + clientSocket.getInetAddress());
                         PacketHandler connection = new PacketHandler(clientSocket);
-                        packetHandlerList.put(clientSocket.getInetAddress(), connection);
+                        packetHandlerList.put(clientSocket.getInetAddress().toString() + ":" + clientSocket.getPort(), connection);
                         connection.start();
                     }
                 } catch (IOException ex) {
@@ -68,6 +79,8 @@ public class JARCraftinator {
                 running = false;
                 System.out.println("Thanks for using JARCraftinator :)");
                 System.exit(0);
+            }else if(command.equalsIgnoreCase("handlers")){
+                System.out.println(packetHandlerList.toString());
             }else{
                 System.out.println("Unknown command.");
             }
@@ -90,6 +103,10 @@ public class JARCraftinator {
     public static void endConnection(PacketHandler connection){
         connection.interrupt();
         packetHandlerList.remove(connection);
+    }
+
+    public static FileConfiguration getConfig(){
+        return config;
     }
 
 }

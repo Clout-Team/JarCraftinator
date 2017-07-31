@@ -2,7 +2,8 @@
   <library name="dependencies">
     <CLASSES>
       <root url="jar://$USER_HOME$/Downloads/json-simple-1.1.1.jar!/" />
-      <root url="jar://$USER_HOME$/Downloads/gson-2.8.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../YamlConfiguration/yamlbeans-1.12.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../YamlConfiguration/YamlConfiguration.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
