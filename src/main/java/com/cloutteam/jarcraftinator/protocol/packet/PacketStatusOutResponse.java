@@ -1,7 +1,9 @@
-package com.cloutteam.jarcraftinator.packet;
+package com.cloutteam.jarcraftinator.protocol.packet;
 
-import com.cloutteam.jarcraftinator.MinecraftVersion;
 import com.cloutteam.jarcraftinator.player.Player;
+import com.cloutteam.jarcraftinator.protocol.MinecraftVersion;
+import com.cloutteam.jarcraftinator.utils.VarData;
+import org.json.simple.JSONObject;
 
 import java.io.DataOutputStream;
 import java.util.List;
@@ -18,15 +20,20 @@ public class PacketStatusOutResponse extends PacketOut {
     /**
      * Creates a Status Response packet.
      *
-     * @param version The version the server is in.
-     * @param maxPlayers The maximum players allowed by the server.
+     * @param version       The version the server is in.
+     * @param maxPlayers    The maximum players allowed by the server.
      * @param onlinePlayers The online players amount.
-     * @param playerList The list of the online players. Can be null.
-     * @param motd The MOTD of the server.
-     * @param favicon The favicon of the server in base64. The correct format is "data:image/png;base64,<data>". MUST be a PNG image. Can be empty.
+     * @param playerList    The list of the online players. Can be null.
+     * @param motd          The MOTD of the server.
+     * @param favicon       The favicon of the server in base64. The correct format is "data:image/png;base64,<data>". MUST be a PNG image. Can be empty.
      */
-    public PacketStatusOutResponse (MinecraftVersion version, int maxPlayers, int onlinePlayers, List<Player> playerList, String motd, String favicon) {
-
+    public PacketStatusOutResponse(MinecraftVersion version, int maxPlayers, int onlinePlayers, List<Player> playerList, String motd, String favicon) {
+        this.version = version;
+        this.maxPlayers = maxPlayers;
+        this.onlinePlayers = onlinePlayers;
+        this.playerList = playerList;
+        this.motd = motd;
+        this.favicon = favicon;
     }
 
     /**
@@ -139,6 +146,32 @@ public class PacketStatusOutResponse extends PacketOut {
 
     @Override
     public void send(DataOutputStream out) {
-        //TODO
+        JSONObject response = new JSONObject();
+        JSONObject version = new JSONObject();
+        System.out.println(this.version);
+        version.put("name", this.version.getName());
+        version.put("protocol", this.version.getProtocol());
+        JSONObject players = new JSONObject();
+        players.put("max", maxPlayers);
+        players.put("online", onlinePlayers);
+        //TODO sample object
+        JSONObject description = new JSONObject();
+        description.put("text", motd);
+        response.put("version", version);
+        response.put("players", players);
+        response.put("description", description);
+        if (!favicon.isEmpty())
+            response.put("favicon", favicon);
+        String responseText = response.toJSONString();
+
+        try {
+            VarData.writeVarInt(out, responseText.getBytes().length + 2);
+            VarData.writeVarInt(out, 0x00);
+            VarData.writeVarInt(out, responseText.getBytes().length);
+            out.writeBytes(responseText);
+            out.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

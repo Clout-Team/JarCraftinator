@@ -1,4 +1,4 @@
-package com.cloutteam.jarcraftinator.packet;
+package com.cloutteam.jarcraftinator.protocol.packet;
 
 import com.cloutteam.jarcraftinator.utils.VarData;
 
@@ -12,15 +12,34 @@ public class PacketHandshakeIn extends PacketIn {
     private NextState nextState;
 
     @Override
-    public void onReceive(DataInputStream in) throws Exception {
+    public void onReceive(int length, DataInputStream in) throws Exception {
         clientVersion = VarData.readVarInt(in);
+        System.out.println(clientVersion);
         address = VarData.readVarString(in, VarData.readVarInt(in));
-        port = VarData.readVarInt(in);
+        System.out.println(address);
+        port = in.readUnsignedShort();
+        System.out.println(port);
         nextState = NextState.getByCode(VarData.readVarInt(in));
     }
 
+    public int getClientVersion() {
+        return clientVersion;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public NextState getNextState() {
+        return nextState;
+    }
+
     public enum NextState {
-        STATUS(1), LOGIN(2);
+        NONE(0), STATUS(1), LOGIN(2);
 
         private final int code;
 
@@ -33,9 +52,10 @@ public class PacketHandshakeIn extends PacketIn {
         }
 
         public static NextState getByCode(int code) {
+            System.out.println(code);
             for (NextState state : values())
                 if (state.getCode() == code) return state;
-            return null;
+            return NONE;
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.cloutteam.jarcraftinator;
 
 import com.cloutteam.jarcraftinator.config.FileConfiguration;
+import com.cloutteam.jarcraftinator.handler.ConnectionHandler;
 import com.cloutteam.jarcraftinator.handler.PacketHandler;
 
 import java.io.IOException;
@@ -35,7 +36,7 @@ public class JARCraftinator {
         System.out.println("Starting server...");
         packetHandlerList = new HashMap<>();
 
-        // Start the server thread
+        /*// Start the server thread
         Thread serverThread = new Thread(() -> {
             ServerSocket serverSocket = null;
             try {
@@ -60,7 +61,8 @@ public class JARCraftinator {
                 }
             }
         });
-        serverThread.start();
+        serverThread.start();*/
+        new ConnectionHandler().start();
         System.out.println("Server ready and listening.");
 
         System.out.println("Starting CLI...");
@@ -76,7 +78,7 @@ public class JARCraftinator {
                 for(PacketHandler connection : packetHandlerList.values()){
                     endConnection(connection);
                 }
-                serverThread.interrupt();
+                //serverThread.interrupt();
                 running = false;
                 System.out.println("Thanks for using JARCraftinator :)");
                 System.exit(0);
@@ -99,6 +101,14 @@ public class JARCraftinator {
             output += message + " ";
         }
         System.out.println(output);
+    }
+
+    public static void err(String... messages){
+        String output = "[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] ";
+        for(String message : messages){
+            output += message + " ";
+        }
+        System.err.println(output);
     }
 
     public static void endConnection(PacketHandler connection){

@@ -1,4 +1,4 @@
-package com.cloutteam.jarcraftinator;
+package com.cloutteam.jarcraftinator.protocol;
 
 public enum MinecraftVersion {
     v1_7_2("1.7.2", 4),
