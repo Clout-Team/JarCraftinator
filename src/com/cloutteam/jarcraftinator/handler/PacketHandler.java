@@ -170,15 +170,15 @@ public class PacketHandler extends Thread {
 
                         /* SEND JOIN GAME PACKET */
                         byte[] biome = VarData.packString("default");
-                        VarData.writeVarInt(output, 12 + biome.length);
-                        VarData.writeVarInt(output,0x23);
-                        output.writeInt(6969); // size: 4
-                        output.write(0x1); // size: 1
-                        output.writeInt(0); // size: 4
-                        output.write(0x0); // size: 1
-                        output.write((byte) 10); //size: 1
-                        output.write(biome);
-                        output.write(0x00); //size: 1
+                        VarData.writeVarInt(output, 12 + biome.length + VarData.getVarInt(0x23).length); // Packet length
+                        VarData.writeVarInt(output,0x23); // Packet ID
+                        output.writeInt(1337); // size: 4 - EID
+                        output.write((byte) 1); // size: 1   - Gamemode
+                        output.writeInt(0); // size: 4    - Dimension
+                        output.write(0x0); // size: 1     - Difficulty
+                        output.write((byte) 10); //size: 1   - Max Players
+                        output.write(biome);     // Level type
+                        output.write(0x00); //size: 1 - reduced debug info
 
                         System.out.println("debug1");
                         try {
