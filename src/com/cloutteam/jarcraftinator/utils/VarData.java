@@ -3,6 +3,7 @@ package com.cloutteam.jarcraftinator.utils;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class VarData {
@@ -61,10 +62,10 @@ public class VarData {
         byte[] str = string.getBytes("UTF-8");
         byte[] len = getVarInt(str.length);
 
-        byte[] result = new byte[len.length + str.length];
-        System.arraycopy(len, 0, result, 0, len.length);
-        System.arraycopy(str, 0, result, 0, str.length);
-        return result;
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        result.write(len);
+        result.write(str);
+        return result.toByteArray();
     }
 
 }

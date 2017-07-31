@@ -1,88 +1,85 @@
 package com.cloutteam.jarcraftinator;
 
-import com.cloutteam.jarcraftinator.utils.QuickJSON;
-import com.cloutteam.jarcraftinator.utils.VarData;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import org.json.simple.JSONObject;
-import sun.corba.OutputStreamFactory;
+import com.cloutteam.jarcraftinator.handler.PacketHandler;
+import com.sun.security.ntlm.Server;
 
-import java.io.*;
+import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class JARCraftinator {
 
+    private static Map<InetAddress, PacketHandler> packetHandlerList;
+    private static boolean running = true;
+
     public static void main(String[] args){
-        try {
-            ServerSocket serverSocket = new ServerSocket(25565);
-            Socket clientSocket = serverSocket.accept();
-            DataInputStream stream = new DataInputStream(clientSocket.getInputStream());
-            DataOutputStream output = new DataOutputStream(clientSocket.getOutputStream());
+        packetHandlerList = new HashMap<>();
 
-            /* HANDSHAKING */
+        // Start the server thread
+        Thread serverThread = new Thread(() -> {
+            ServerSocket serverSocket = null;
+            try {
+                serverSocket = new ServerSocket(25565);
+            }catch(IOException ex){
+                System.out.println("The port that the server tried to bind to (25565) was already taken by another service.");
+                System.out.println("Make sure that you don't have any other instances of the server open and that you've turned of all other services on this port.");
+                System.exit(1);
+            }
 
-            System.out.println("HANDSHAKING:");
-            // Packet (ID+data) length
-            System.out.println("Length: " + VarData.readVarInt(stream));
-            // Packet ID
-            System.out.println("Packet ID: " + VarData.readVarInt(stream));
+            while(true) {
+                try {
+                    Socket clientSocket = serverSocket.accept();
+                    if((!packetHandlerList.keySet().contains(clientSocket.getInetAddress())) || packetHandlerList.get(clientSocket.getInetAddress()).isDisconnected()) {
+                        log("Registered new handler for " + clientSocket.getInetAddress());
+                        PacketHandler connection = new PacketHandler(clientSocket);
+                        packetHandlerList.put(clientSocket.getInetAddress(), connection);
+                        connection.start();
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        serverThread.start();
 
-            System.out.println("Payload_");
+        // Now start the CLI
+        Scanner scanner = new Scanner(System.in);
+        while(running){
+            String command = scanner.nextLine();
 
-            // VARINT - Protocol Version
-            System.out.println("Protocol Version: " + VarData.readVarInt(stream));
-            // STRING - Server address (size)
-            System.out.println("Server Address: " + VarData.readVarString(stream, VarData.readVarInt(stream)));
-            // USHORT - Server port
-            System.out.println("Server Port: " + stream.readUnsignedShort());
-            // VARINT - Next state
-            System.out.println("Next State: " + VarData.readVarInt(stream));
-
-            // Request packet //
-            // Read packet ID (empty packet)
-            System.out.println();
-            System.out.println("REQUEST PACKET:");
-            System.out.println("Length: " + VarData.readVarInt(stream));
-            System.out.println("Packet ID: " + VarData.readVarInt(stream));
-
-            /* STATUS */
-            JSONObject slp = new JSONObject();
-            slp.put("version", QuickJSON.getVersionMap("1.12", 335));
-            slp.put("players", QuickJSON.players(0, 100));
-            slp.put("description", QuickJSON.description("Hello world"));
-
-            System.out.println();
-
-            // Write total packet length (JSON String length, String length byte length, packet ID length)
-            byte[] pid = VarData.getVarInt(0);
-            byte[] packet = VarData.packString(slp.toJSONString());
-
-            //VarData.writeVarInt(output, packet.length + pid.length );
-            output.write(VarData.getVarInt(packet.length + pid.length));
-            // Write packet ID
-            output.write(pid);
-            // Write payload
-            output.write(packet);
-            // Flush output
-            output.flush();
-
-            // Ping packet //
-            // Packet ID
-            System.out.println("Should be 1:: " + VarData.readVarInt(stream));
-            long data = stream.readLong();
-
-            // Pong packet //
-
-
-            clientSocket.close();
-            serverSocket.close();
-
-        }catch(IOException ex){
-            ex.printStackTrace();
+            if(command.equalsIgnoreCase("stop")){
+                // Stop the server
+                System.out.println("Stopping server...");
+                for(PacketHandler connection : packetHandlerList.values()){
+                    endConnection(connection);
+                }
+                serverThread.interrupt();
+                running = false;
+                System.out.println("Thanks for using JARCraftinator :)");
+                System.exit(0);
+            }
         }
+
+    }
+
+    public static String getIPAddress(Socket clientSocket){
+        return clientSocket.getInetAddress().toString() + ":" + clientSocket.getPort();
+    }
+
+    public static void log(String... messages){
+        String output = "[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] ";
+        for(String message : messages){
+            output += message + " ";
+        }
+        System.out.println(output);
+    }
+
+    public static void endConnection(PacketHandler connection){
+        connection.interrupt();
+        packetHandlerList.remove(connection);
     }
 
 }
