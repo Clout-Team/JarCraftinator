@@ -26,7 +26,7 @@ public class JARCraftinator {
         System.out.println("Loading settings...");
         try {
             config = new FileConfiguration("server.yml");
-            config.saveDefaultConfig(JARCraftinator.class.getResourceAsStream("config/server.yml"));
+            config.saveDefaultConfig(JARCraftinator.class.getResourceAsStream("/server.yml"));
             config.loadConfig();
             System.out.println("Loaded settings.");
         }catch(IOException ex){
