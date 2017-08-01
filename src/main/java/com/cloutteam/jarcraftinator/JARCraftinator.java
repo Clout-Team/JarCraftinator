@@ -18,6 +18,8 @@ public class JARCraftinator {
     private static boolean running = true;
     private static FileConfiguration config;
 
+    private static int nextEntityID = 0;
+
     public static void main(String[] args) {
         System.out.println("Welcome to JARCraftinator.");
         System.out.println("JARCraftinator is a Clout Team project");
@@ -117,6 +119,10 @@ public class JARCraftinator {
 
     public static FileConfiguration getConfig() {
         return config;
+    }
+
+    public static int getNextEntityID() {
+        return nextEntityID++;
     }
 
 }

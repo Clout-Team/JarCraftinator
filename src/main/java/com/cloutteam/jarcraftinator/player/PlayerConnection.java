@@ -1,23 +1,25 @@
 package com.cloutteam.jarcraftinator.player;
 
 import com.cloutteam.jarcraftinator.JARCraftinator;
-import com.cloutteam.jarcraftinator.api.ChatColor;
+import com.cloutteam.jarcraftinator.api.*;
 import com.cloutteam.jarcraftinator.protocol.MinecraftVersion;
-import com.cloutteam.jarcraftinator.protocol.packet.PacketHandshakeIn;
-import com.cloutteam.jarcraftinator.protocol.packet.PacketStatusInPing;
-import com.cloutteam.jarcraftinator.protocol.packet.PacketStatusOutPong;
-import com.cloutteam.jarcraftinator.protocol.packet.PacketStatusOutResponse;
+import com.cloutteam.jarcraftinator.protocol.packet.*;
+import com.cloutteam.jarcraftinator.utils.UUIDManager;
 import com.cloutteam.jarcraftinator.utils.VarData;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.UUID;
 
 public class PlayerConnection extends Thread {
 
     private final Socket socket;
+
     private PacketHandshakeIn.NextState handshakeState = PacketHandshakeIn.NextState.NONE;
+    private String username = "";
 
     public PlayerConnection(Socket socket) {
         this.socket = socket;
@@ -40,7 +42,13 @@ public class PlayerConnection extends Thread {
                                     new PacketStatusOutResponse(MinecraftVersion.v1_12, JARCraftinator.getConfig().getInt("max-players"), 0, null, ChatColor.translateAlternateColorCodes(JARCraftinator.getConfig().getString("pinger.motd")), JARCraftinator.getConfig().getString("pinger.favicon")).send(out);
                                     break;
                                 case LOGIN:
-                                    // TODO do the login system
+                                    PacketLoginInLoginStart login = new PacketLoginInLoginStart();
+                                    login.onReceive(packetLength, in);
+                                    username = login.getPlayerName();
+
+                                    UUID uuid = UUIDManager.getUUID(username);
+                                    new PacketLoginOutLoginSuccess(uuid, username).send(out);
+                                    new PacketPlayOutJoinGame(JARCraftinator.getNextEntityID(), GameMode.SURVIVAL, DimensionType.OVERWORLD, Difficulty.PEACEFUL, 10, LevelType.DEFAULT, false).send(out);
                                     break;
                                 case NONE:
                                     // Receive the handshake and set the status
@@ -57,6 +65,9 @@ public class PlayerConnection extends Thread {
                             socket.close();
                             break;
                     }
+                } catch (EOFException e) {
+                    JARCraftinator.err("Error while receiving packet from " + socket.getInetAddress().toString() + "!", "Closing connection!");
+                    break;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
