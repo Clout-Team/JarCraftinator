@@ -1,9 +1,9 @@
 package com.cloutteam.jarcraftinator.protocol.packet;
 
+import com.cloutteam.jarcraftinator.api.json.JSONObject;
 import com.cloutteam.jarcraftinator.player.Player;
 import com.cloutteam.jarcraftinator.protocol.MinecraftVersion;
 import com.cloutteam.jarcraftinator.utils.VarData;
-import org.json.simple.JSONObject;
 
 import java.io.DataOutputStream;
 import java.util.List;
@@ -146,28 +146,17 @@ public class PacketStatusOutResponse extends PacketOut {
 
     @Override
     public void send(DataOutputStream out) {
-        JSONObject response = new JSONObject();
-        JSONObject version = new JSONObject();
-        System.out.println(this.version);
-        version.put("name", this.version.getName());
-        version.put("protocol", this.version.getProtocol());
-        JSONObject players = new JSONObject();
-        players.put("max", maxPlayers);
-        players.put("online", onlinePlayers);
-        //TODO sample object
-        JSONObject description = new JSONObject();
-        description.put("text", motd);
-        response.put("version", version);
-        response.put("players", players);
-        response.put("description", description);
-        if (!favicon.isEmpty())
-            response.put("favicon", favicon);
-        String responseText = response.toJSONString();
-
+        JSONObject response = new JSONObject().add("version", new JSONObject().add("name", this.version.getName()).add("protocol", this.version.getProtocol())).add("players", new JSONObject().add("max", maxPlayers).add("online", onlinePlayers)).add("description", new JSONObject().add("text", motd));
+        if(!favicon.isEmpty())
+            response.add("favicon", favicon);
+        String responseText = response.toString();
+        //TODO sample object inside player
         try {
-            VarData.writeVarInt(out, responseText.getBytes().length + 2);
-            VarData.writeVarInt(out, 0x00);
-            VarData.writeVarInt(out, responseText.getBytes().length);
+            byte[] packetId = VarData.getVarInt(0x00);
+            byte[] dataLength = VarData.getVarInt(responseText.getBytes().length);
+            VarData.writeVarInt(out, responseText.getBytes().length + packetId.length + dataLength.length);
+            out.write(packetId);
+            out.write(dataLength);
             out.writeBytes(responseText);
             out.flush();
         } catch (Exception e) {

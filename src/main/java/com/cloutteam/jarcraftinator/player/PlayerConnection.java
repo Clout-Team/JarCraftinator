@@ -1,5 +1,7 @@
 package com.cloutteam.jarcraftinator.player;
 
+import com.cloutteam.jarcraftinator.JARCraftinator;
+import com.cloutteam.jarcraftinator.api.ChatColor;
 import com.cloutteam.jarcraftinator.protocol.MinecraftVersion;
 import com.cloutteam.jarcraftinator.protocol.packet.PacketHandshakeIn;
 import com.cloutteam.jarcraftinator.protocol.packet.PacketStatusInPing;
@@ -32,11 +34,10 @@ public class PlayerConnection extends Thread {
                     int packetId = VarData.readVarInt(in);
                     switch (packetId) {
                         case 0x00:
-                            System.out.println(handshakeState);
                             switch (handshakeState) {
                                 case STATUS:
                                     // Send the response back to the client
-                                    new PacketStatusOutResponse(MinecraftVersion.v1_12, 10, 0, null, "Amazing server!", "").send(out);
+                                    new PacketStatusOutResponse(MinecraftVersion.v1_12, JARCraftinator.getConfig().getInt("max-players"), 0, null, ChatColor.translateAlternateColorCodes(JARCraftinator.getConfig().getString("pinger.motd")), JARCraftinator.getConfig().getString("pinger.favicon")).send(out);
                                     break;
                                 case LOGIN:
                                     // TODO do the login system

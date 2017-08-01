@@ -1,7 +1,7 @@
 package com.cloutteam.jarcraftinator.handler;
 
 import com.cloutteam.jarcraftinator.JARCraftinator;
-import com.cloutteam.jarcraftinator.api.cloutteam.samjakob.ChatColor;
+import com.cloutteam.jarcraftinator.api.ChatColor;
 import com.cloutteam.jarcraftinator.utils.QuickJSON;
 import com.cloutteam.jarcraftinator.utils.VarData;
 import org.json.simple.JSONObject;
@@ -14,7 +14,6 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.util.Arrays;
 import java.util.UUID;
 
 public class PacketHandler extends Thread {

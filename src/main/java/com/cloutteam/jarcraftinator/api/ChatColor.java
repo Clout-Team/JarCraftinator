@@ -1,4 +1,4 @@
-package com.cloutteam.jarcraftinator.api.cloutteam.samjakob;
+package com.cloutteam.jarcraftinator.api;
 
 import java.util.regex.Pattern;
 
@@ -6,7 +6,7 @@ public class ChatColor {
 
     /**
      * Translates a string with a certain character (most commonly used is &amp;) to a Minecraft color coded string.
-     * This method uses the default character (&amp;). If you want to specify your own color symbol, you can use {@link com.cloutteam.jarcraftinator.api.cloutteam.samjakob.ChatColor#translateAlternateColorCodes(char, String) translateAlternateColorCodes(symbol, text)}
+     * This method uses the default character (&amp;). If you want to specify your own color symbol, you can use {@link ChatColor#translateAlternateColorCodes(char, String) translateAlternateColorCodes(symbol, text)}
      * @param text The text that you want to colorize.
      * @return The colorized text.
      */
@@ -16,7 +16,7 @@ public class ChatColor {
 
     /**
      * Translates a string with a certain character (most commonly used is &amp;) to a Minecraft color coded string.
-     * If you want to just use the default character (&amp;) you can just use {@link com.cloutteam.jarcraftinator.api.cloutteam.samjakob.ChatColor#translateAlternateColorCodes(String) translateAlternateColorCodes(text)}
+     * If you want to just use the default character (&amp;) you can just use {@link ChatColor#translateAlternateColorCodes(String) translateAlternateColorCodes(text)}
      *
      * @param symbol The symbol that you want to replace with the color code symbol (Usually: &)
      * @param text The text that you want to colorize.

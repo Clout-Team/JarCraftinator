@@ -5,7 +5,6 @@ import com.cloutteam.jarcraftinator.handler.ConnectionHandler;
 import com.cloutteam.jarcraftinator.handler.PacketHandler;
 
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,7 +18,7 @@ public class JARCraftinator {
     private static boolean running = true;
     private static FileConfiguration config;
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         System.out.println("Welcome to JARCraftinator.");
         System.out.println("JARCraftinator is a Clout Team project");
         System.out.println("https://wwww.clout-team.com/");
@@ -30,7 +29,7 @@ public class JARCraftinator {
             config.saveDefaultConfig(JARCraftinator.class.getResourceAsStream("/server.yml"));
             config.loadConfig();
             System.out.println("Loaded settings.");
-        }catch(IOException ex){
+        } catch (IOException ex) {
             System.out.println("Unable load server properties. Please double-check your syntax (remember: no tabs in a YAML file, only spaces).");
         }
         System.out.println("Starting server...");
@@ -69,54 +68,54 @@ public class JARCraftinator {
         // Now start the CLI
         Scanner scanner = new Scanner(System.in);
         System.out.println("CLI ready!");
-        while(running){
+        while (running) {
             String command = scanner.nextLine();
 
-            if(command.equalsIgnoreCase("stop")){
+            if (command.equalsIgnoreCase("stop")) {
                 // Stop the server
                 System.out.println("Stopping server...");
-                for(PacketHandler connection : packetHandlerList.values()){
+                for (PacketHandler connection : packetHandlerList.values()) {
                     endConnection(connection);
                 }
                 //serverThread.interrupt();
                 running = false;
                 System.out.println("Thanks for using JARCraftinator :)");
                 System.exit(0);
-            }else if(command.equalsIgnoreCase("handlers")){
+            } else if (command.equalsIgnoreCase("handlers")) {
                 System.out.println(packetHandlerList.toString());
-            }else{
+            } else {
                 System.out.println("Unknown command.");
             }
         }
 
     }
 
-    public static String getIPAddress(Socket clientSocket){
+    public static String getIPAddress(Socket clientSocket) {
         return clientSocket.getInetAddress().toString() + ":" + clientSocket.getPort();
     }
 
-    public static void log(String... messages){
+    public static void log(String... messages) {
         String output = "[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] ";
-        for(String message : messages){
+        for (String message : messages) {
             output += message + " ";
         }
         System.out.println(output);
     }
 
-    public static void err(String... messages){
+    public static void err(String... messages) {
         String output = "[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] ";
-        for(String message : messages){
+        for (String message : messages) {
             output += message + " ";
         }
         System.err.println(output);
     }
 
-    public static void endConnection(PacketHandler connection){
+    public static void endConnection(PacketHandler connection) {
         connection.interrupt();
         packetHandlerList.remove(connection);
     }
 
-    public static FileConfiguration getConfig(){
+    public static FileConfiguration getConfig() {
         return config;
     }
 

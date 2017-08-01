@@ -14,11 +14,8 @@ public class PacketHandshakeIn extends PacketIn {
     @Override
     public void onReceive(int length, DataInputStream in) throws Exception {
         clientVersion = VarData.readVarInt(in);
-        System.out.println(clientVersion);
         address = VarData.readVarString(in, VarData.readVarInt(in));
-        System.out.println(address);
         port = in.readUnsignedShort();
-        System.out.println(port);
         nextState = NextState.getByCode(VarData.readVarInt(in));
     }
 
@@ -52,7 +49,6 @@ public class PacketHandshakeIn extends PacketIn {
         }
 
         public static NextState getByCode(int code) {
-            System.out.println(code);
             for (NextState state : values())
                 if (state.getCode() == code) return state;
             return NONE;
