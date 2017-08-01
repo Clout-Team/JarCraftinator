@@ -1,10 +1,9 @@
 package com.cloutteam.jarcraftinator.utils;
 
-import java.io.*;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class VarData {
 
@@ -34,7 +33,7 @@ public class VarData {
 
     public static String readVarString(DataInputStream in, int size) throws IOException {
         String result = "";
-        for(int i = 0; i < size; i++){
+        for (int i = 0; i < size; i++) {
             result += (char) in.readByte();
         }
         return result;
@@ -45,11 +44,15 @@ public class VarData {
         out.writeUTF(string);
     }
 
+    public static void writePosition(DataOutputStream out, int x, int y, int z) throws IOException {
+        out.writeLong(((x & 0x3FFFFFF) << 38) | ((y & 0xFFF) << 26) | (z & 0x3FFFFFF));
+    }
+
     public static byte[] getVarInt(int paramInt) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         while (true) {
             if ((paramInt & 0xFFFFFF80) == 0) {
-                out.write((byte)paramInt);
+                out.write((byte) paramInt);
                 return out.toByteArray();
             }
 

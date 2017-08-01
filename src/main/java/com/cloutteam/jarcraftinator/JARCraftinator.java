@@ -19,6 +19,7 @@ public class JARCraftinator {
     private static FileConfiguration config;
 
     private static int nextEntityID = 0;
+    private static int nextTeleportID = 0;
 
     public static void main(String[] args) {
         System.out.println("Welcome to JARCraftinator.");
@@ -123,6 +124,10 @@ public class JARCraftinator {
 
     public static int getNextEntityID() {
         return nextEntityID++;
+    }
+
+    public static int getNextTeleportID() {
+        return nextTeleportID++;
     }
 
 }

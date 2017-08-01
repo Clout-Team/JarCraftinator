@@ -12,6 +12,7 @@ import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.UUID;
 
 public class PlayerConnection extends Thread {
@@ -19,6 +20,7 @@ public class PlayerConnection extends Thread {
     private final Socket socket;
 
     private PacketHandshakeIn.NextState handshakeState = PacketHandshakeIn.NextState.NONE;
+    private boolean loggedIn = false;
     private String username = "";
 
     public PlayerConnection(Socket socket) {
@@ -49,6 +51,7 @@ public class PlayerConnection extends Thread {
                                     UUID uuid = UUIDManager.getUUID(username);
                                     new PacketLoginOutLoginSuccess(uuid, username).send(out);
                                     new PacketPlayOutJoinGame(JARCraftinator.getNextEntityID(), GameMode.SURVIVAL, DimensionType.OVERWORLD, Difficulty.PEACEFUL, 10, LevelType.DEFAULT, false).send(out);
+                                    new PacketPlayOutSpawnPosition(0, 64, 0).send(out);
                                     break;
                                 case NONE:
                                     // Receive the handshake and set the status
@@ -64,8 +67,15 @@ public class PlayerConnection extends Thread {
                             new PacketStatusOutPong(ping.getLength(), ping.getData()).send(out);
                             socket.close();
                             break;
+                        case 0x05:
+                            PacketPlayInClientSettings clientSettings = new PacketPlayInClientSettings();
+                            clientSettings.onReceive(packetLength, in);
+                            if(loggedIn)
+                                break;
+
+                            break;
                     }
-                } catch (EOFException e) {
+                } catch (EOFException | SocketException e) {
                     JARCraftinator.err("Error while receiving packet from " + socket.getInetAddress().toString() + "!", "Closing connection!");
                     break;
                 } catch (Exception e) {
