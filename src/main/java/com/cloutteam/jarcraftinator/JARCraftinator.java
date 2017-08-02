@@ -5,6 +5,7 @@ import com.cloutteam.jarcraftinator.handler.ConnectionHandler;
 import com.cloutteam.jarcraftinator.logging.LogLevel;
 import com.cloutteam.jarcraftinator.logging.Logger;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,11 +29,11 @@ public class JARCraftinator {
 
         try {
             String path = "/META-INF/maven/com.clout-team/JARCraftinator/pom.properties";
-            InputStream stream = JARCraftinator.class.getResourceAsStream(path);
+            InputStream stream = JARCraftinator.class.getClass().getResourceAsStream(path);
             Properties properties = new Properties();
             properties.load(stream);
             version = (String) properties.get("version");
-        }catch(IOException ex){
+        }catch(IOException | NullPointerException ex ){
             version = "Unknown";
         }
 
