@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 public class PlayerConnection extends Thread {
 
@@ -60,7 +59,7 @@ public class PlayerConnection extends Thread {
                                     // Empty packet
                                     // Send the response back to the client
                                     new PacketStatusOutResponse(MinecraftVersion.v1_12, JARCraftinator.getConfig().getInt("max-players"), 0, null, ChatColor.translateAlternateColorCodes(JARCraftinator.getConfig().getString("pinger.motd")), JARCraftinator.getConfig().getString("pinger.favicon")).send(out);
-                                    JARCraftinator.getLogger().log(socket.getInetAddress() + ":" + socket.getPort()  + " has pinged the server.");
+                                    JARCraftinator.getLogger().log(socket.getInetAddress() + ":" + socket.getPort() + " has pinged the server.");
                                     break;
                                 case 0x01:
                                     PacketStatusInPing ping = new PacketStatusInPing();
@@ -114,6 +113,11 @@ public class PlayerConnection extends Thread {
                                     JARCraftinator.getLogger().log("Y: " + packetPlayInPlayerPositionAndLook.getY(), LogLevel.DEBUG);
                                     JARCraftinator.getLogger().log("Z: " + packetPlayInPlayerPositionAndLook.getZ(), LogLevel.DEBUG);
                                     break;
+                                default:
+                                    JARCraftinator.getLogger().log("Unknown packet ID: " + Integer.toHexString(packetId), LogLevel.DEBUG);
+                                    for (packetLength -= VarData.getVarInt(packetId).length; packetLength > 0; packetLength--)
+                                        in.readByte();
+
                             }
                             break;
                     }
