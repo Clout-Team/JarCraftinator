@@ -37,34 +37,7 @@ public class JARCraftinator {
         }
         System.out.println("Starting server...");
         packetHandlerList = new HashMap<>();
-
-        /*// Start the server thread
-        Thread serverThread = new Thread(() -> {
-            ServerSocket serverSocket = null;
-            try {
-                serverSocket = new ServerSocket(25565);
-            }catch(IOException ex){
-                System.out.println("The port that the server tried to bind to (25565) was already taken by another service.");
-                System.out.println("Make sure that you don't have any other instances of the server open and that you've turned of all other services on this port.");
-                System.exit(1);
-            }
-
-            while(true) {
-                try {
-                    Socket clientSocket = serverSocket.accept();
-                    if((!packetHandlerList.keySet().contains(clientSocket.getInetAddress().toString() + ":" + clientSocket.getPort())) || packetHandlerList.get(clientSocket.getInetAddress().toString() + ":" + clientSocket.getPort()).isDisconnected()) {
-                        log("Registered new handler for " + clientSocket.getInetAddress());
-                        PacketHandler connection = new PacketHandler(clientSocket);
-                        packetHandlerList.put(clientSocket.getInetAddress().toString() + ":" + clientSocket.getPort(), connection);
-                        connection.start();
-                    }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-        serverThread.start();*/
-        new ConnectionHandler().start();
+        new ConnectionHandler(getConfig().getInt("port")).start();
         System.out.println("Server ready and listening.");
 
         System.out.println("Starting CLI...");
@@ -98,11 +71,13 @@ public class JARCraftinator {
     }
 
     public static void log(String... messages) {
-        String output = "[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] ";
-        for (String message : messages) {
-            output += message + " ";
+        if(getConfig().getBoolean("debug")) {
+            String output = "[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] ";
+            for (String message : messages) {
+                output += message + " ";
+            }
+            System.out.println(output);
         }
-        System.out.println(output);
     }
 
     public static void err(String... messages) {
