@@ -24,7 +24,8 @@ public class ConnectionHandler extends Thread {
                 new PlayerConnection(socket).start();
             }
         } catch (IOException ex) {
-            JARCraftinator.err("Port " + port + " is already in use!\n\nCheck that:\n1. There isn't another application running on port " + port + ".\n2. There aren't other instances of the server still running.");
+            JARCraftinator.err("A critical error occurred.");
+            System.exit(1);
         }
     }
 }

@@ -35,6 +35,16 @@ public class JARCraftinator {
         } catch (IOException ex) {
             System.out.println("Unable load server properties. Please double-check your syntax (remember: no tabs in a YAML file, only spaces).");
         }
+
+        // Check the port before the server starts
+        try {
+            Socket portCheck = new Socket("localhost", getConfig().getInt("port"));
+            portCheck.close();
+        }catch(IOException ex){
+            JARCraftinator.err("Port " + getConfig().getInt("port") + " is already in use!\n\nCheck that:\n1. There isn't another application running on port " + getConfig().getInt("port") + ".\n2. There aren't other instances of the server still running.");
+            System.exit(1);
+        }
+
         System.out.println("Starting server...");
         packetHandlerList = new HashMap<>();
         new ConnectionHandler(getConfig().getInt("port")).start();

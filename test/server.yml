@@ -3,6 +3,7 @@
 
 # General properties
 max-players: 10
+port: 25565
 online-mode: false
 
 # Server list properties
