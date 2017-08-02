@@ -104,6 +104,15 @@ public class FileConfiguration {
     public int getInt(String path){
         return Integer.parseInt((String) resolvePath(path));
     }
+
+    public boolean getBoolean(String path) {
+        switch(getString(path)){
+            case "true":
+                return true;
+            default:
+                return false;
+        }
+    }
     
     /**
      * Gets a string list from the configuration as an ArrayList
