@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public class PlayerConnection extends Thread {
 
@@ -90,7 +91,7 @@ public class PlayerConnection extends Thread {
                                 case 0x00:
                                     PacketPlayInTeleportConfirm teleportConfirm = new PacketPlayInTeleportConfirm();
                                     teleportConfirm.onReceive(packetLength, in);
-                                    System.out.println("Confirmed teleportID: " + teleportConfirm.getTeleportID());
+                                    JARCraftinator.getLogger().log("Confirmed teleportID: " + teleportConfirm.getTeleportID(), LogLevel.DEBUG);
                                     break;
                                 case 0x05:
                                     PacketPlayInClientSettings clientSettings = new PacketPlayInClientSettings();
@@ -98,13 +99,15 @@ public class PlayerConnection extends Thread {
                                     if (loggedIn)
                                         break;
                                     loggedIn = true;
-                                    System.out.println("Player's locale: " + clientSettings.getLocale());
+                                    JARCraftinator.getLogger().log("Player's locale: " + clientSettings.getLocale(), LogLevel.DEBUG);
                                     new PacketPlayOutPlayerPositionAndLook(0, 64, 0, 0, 0, (byte) 0, JARCraftinator.getNextTeleportID()).send(out);
                                     break;
                                 case 0x0F:
                                     PacketPlayInPlayerPositionAndLook packetPlayInPlayerPositionAndLook = new PacketPlayInPlayerPositionAndLook();
                                     packetPlayInPlayerPositionAndLook.onReceive(packetLength, in);
-                                    System.out.println("X: " + packetPlayInPlayerPositionAndLook.getY());
+                                    JARCraftinator.getLogger().log("X: " + packetPlayInPlayerPositionAndLook.getX());
+                                    JARCraftinator.getLogger().log("Y: " + packetPlayInPlayerPositionAndLook.getY());
+                                    JARCraftinator.getLogger().log("Z: " + packetPlayInPlayerPositionAndLook.getZ());
                                     break;
                             }
                             break;

@@ -11,7 +11,6 @@ com\cloutteam\jarcraftinator\utils\QuickJSON.class
 com\cloutteam\jarcraftinator\logging\LogLevel.class
 com\cloutteam\jarcraftinator\protocol\packet\PacketPlayInClientSettings.class
 com\cloutteam\jarcraftinator\handler\ConnectionHandler.class
-com\cloutteam\jarcraftinator\handler\PacketHandler.class
 com\cloutteam\jarcraftinator\api\DimensionType.class
 com\cloutteam\jarcraftinator\api\ChatColor.class
 com\cloutteam\jarcraftinator\protocol\packet\PacketLoginInLoginStart.class
@@ -27,7 +26,6 @@ com\cloutteam\jarcraftinator\protocol\packet\PacketIn.class
 com\cloutteam\jarcraftinator\api\json\JSONObject.class
 com\cloutteam\jarcraftinator\protocol\packet\PacketPlayInPlayerPositionAndLook.class
 com\cloutteam\jarcraftinator\player\PlayerConnection.class
-com\cloutteam\jarcraftinator\handler\PacketType.class
 com\cloutteam\jarcraftinator\protocol\packet\PacketHandshakeIn.class
 com\cloutteam\jarcraftinator\api\json\JSONArray.class
 com\cloutteam\jarcraftinator\player\Player.class
