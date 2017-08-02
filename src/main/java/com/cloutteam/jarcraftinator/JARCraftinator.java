@@ -5,6 +5,7 @@ import com.cloutteam.jarcraftinator.handler.ConnectionHandler;
 import com.cloutteam.jarcraftinator.handler.PacketHandler;
 
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -38,7 +39,7 @@ public class JARCraftinator {
 
         // Check the port before the server starts
         try {
-            Socket portCheck = new Socket("localhost", getConfig().getInt("port"));
+            ServerSocket portCheck = new ServerSocket(getConfig().getInt("port"));
             portCheck.close();
         }catch(IOException ex){
             JARCraftinator.err("Port " + getConfig().getInt("port") + " is already in use!\n\nCheck that:\n1. There isn't another application running on port " + getConfig().getInt("port") + ".\n2. There aren't other instances of the server still running.");
