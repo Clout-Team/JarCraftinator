@@ -18,3 +18,8 @@ target
 
 # Virtual Machine Crash Logs
 hs_err_pid*
+
+# JARCraftinator test folder
+test
+src/test/
+test/logs/
