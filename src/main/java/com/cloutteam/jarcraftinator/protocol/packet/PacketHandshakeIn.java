@@ -36,7 +36,7 @@ public class PacketHandshakeIn extends PacketIn {
     }
 
     public enum NextState {
-        NONE(0), STATUS(1), LOGIN(2);
+        STATUS(1), LOGIN(2);
 
         private final int code;
 
@@ -51,7 +51,7 @@ public class PacketHandshakeIn extends PacketIn {
         public static NextState getByCode(int code) {
             for (NextState state : values())
                 if (state.getCode() == code) return state;
-            return NONE;
+            return null;
         }
     }
 }

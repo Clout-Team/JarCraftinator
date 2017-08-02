@@ -22,6 +22,9 @@ public class PacketLoginOutLoginSuccess extends PacketOut{
             byte[] uuid = VarData.packString(this.uuid.toString());
             byte[] username = VarData.packString(this.username);
 
+            System.out.println("UUID: " + this.uuid.toString());
+            System.out.println("Username: " + this.username);
+
             VarData.writeVarInt(out, packetId.length + uuid.length + username.length);
             out.write(packetId);
             out.write(uuid);

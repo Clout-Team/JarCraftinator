@@ -4,7 +4,7 @@ import com.cloutteam.jarcraftinator.utils.VarData;
 
 import java.io.DataOutputStream;
 
-public class PlayerPlayOutPlayerPositionAndLook extends PacketOut {
+public class PacketPlayOutPlayerPositionAndLook extends PacketOut {
 
     private double x;
     private double y;
@@ -14,7 +14,7 @@ public class PlayerPlayOutPlayerPositionAndLook extends PacketOut {
     private byte flags;
     private int teleportID;
 
-    public PlayerPlayOutPlayerPositionAndLook(double x, double y, double z, float yaw, float pitch, byte flags, int teleportID) {
+    public PacketPlayOutPlayerPositionAndLook(double x, double y, double z, float yaw, float pitch, byte flags, int teleportID) {
         this.x = x;
         this.y = y;
         this.z = z;
