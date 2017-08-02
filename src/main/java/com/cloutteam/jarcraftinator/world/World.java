@@ -1,6 +1,7 @@
 package com.cloutteam.jarcraftinator.world;
 
 import com.cloutteam.jarcraftinator.JARCraftinator;
+import com.cloutteam.jarcraftinator.logging.LogLevel;
 
 import java.io.File;
 import java.sql.*;
@@ -20,7 +21,7 @@ public class World {
             this.type = WorldType.fromInt(rs.getInt("Type"));
             System.out.println("World " + this.name + " loaded! type: " + this.type);
         } catch (SQLException e) {
-            JARCraftinator.err(fname + ".world is not a valid worldfile!");
+            JARCraftinator.getLogger().log(fname + ".world is not a valid worldfile!", LogLevel.CRITICAL);
         }
     }
 
@@ -40,14 +41,14 @@ public class World {
         String dbPath = "worlds/" + this.fname + ".world";
         File f = new File(dbPath);
         if (!f.exists()) {
-            JARCraftinator.err("World file " + dbPath + " does not exist!");
+            JARCraftinator.getLogger().log("World file " + dbPath + " does not exist!", LogLevel.CRITICAL);
             System.exit(1);
         }
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
             this.dbconn = connection;
         } catch (SQLException e) {
-            JARCraftinator.err("World file does not exist!");
+            JARCraftinator.getLogger().log("World file does not exist!", LogLevel.CRITICAL);
         }
     }
 
