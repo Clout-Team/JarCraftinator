@@ -2,6 +2,7 @@ package com.cloutteam.jarcraftinator.player;
 
 import com.cloutteam.jarcraftinator.JARCraftinator;
 import com.cloutteam.jarcraftinator.api.*;
+import com.cloutteam.jarcraftinator.logging.LogLevel;
 import com.cloutteam.jarcraftinator.protocol.ConnectionState;
 import com.cloutteam.jarcraftinator.protocol.MinecraftVersion;
 import com.cloutteam.jarcraftinator.protocol.packet.*;
@@ -109,7 +110,7 @@ public class PlayerConnection extends Thread {
                             break;
                     }
                 } catch (EOFException | SocketException e) {
-                    JARCraftinator.err("Error while receiving packet from " + socket.getInetAddress().toString() + "!", "Closing connection!");
+                    JARCraftinator.getLogger().log("Error while receiving packet from " + socket.getInetAddress().toString() + "!\nClosing connection!", LogLevel.ERROR);
                     break;
                 } catch (Exception e) {
                     e.printStackTrace();

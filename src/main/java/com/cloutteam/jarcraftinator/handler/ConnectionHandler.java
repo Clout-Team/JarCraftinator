@@ -1,6 +1,7 @@
 package com.cloutteam.jarcraftinator.handler;
 
 import com.cloutteam.jarcraftinator.JARCraftinator;
+import com.cloutteam.jarcraftinator.logging.LogLevel;
 import com.cloutteam.jarcraftinator.player.PlayerConnection;
 
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class ConnectionHandler extends Thread {
                 new PlayerConnection(socket).start();
             }
         } catch (IOException ex) {
-            JARCraftinator.err("A critical error occurred.");
+            JARCraftinator.getLogger().log("An internal server error occurred.", LogLevel.CRITICAL);
             System.exit(1);
         }
     }
