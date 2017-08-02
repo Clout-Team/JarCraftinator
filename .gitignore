@@ -1,4 +1,26 @@
-.idea
-target/
+# Compiled class files
+*.class
 
+# Log files
+*.log
+
+# IntelliJ files
+.idea
+
+# All compiled files / archives
+target
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Virtual Machine Crash Logs
+hs_err_pid*
+
+# JARCraftinator test folder
+test
+src/test/
+test/logs/
 

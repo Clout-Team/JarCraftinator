@@ -7,7 +7,9 @@ import com.cloutteam.jarcraftinator.logging.Logger;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
+import java.util.Properties;
 import java.util.Scanner;
 
 public class JARCraftinator {
@@ -15,12 +17,26 @@ public class JARCraftinator {
     private static boolean running = true;
     private static FileConfiguration config;
     private static Logger logger;
+    private static String version;
 
     private static int nextEntityID = 0;
     private static int nextTeleportID = 0;
 
     public static void main(String[] args) {
-        System.out.println("Welcome to JARCraftinator.");
+
+        // TODO: Track latest version from http://api.clout-team.com/verdigris/version/
+
+        try {
+            String path = "/META-INF/maven/com.clout-team/JARCraftinator/pom.properties";
+            InputStream stream = JARCraftinator.class.getResourceAsStream(path);
+            Properties properties = new Properties();
+            properties.load(stream);
+            version = (String) properties.get("version");
+        }catch(IOException ex){
+            version = "Unknown";
+        }
+
+        System.out.println("Welcome to JARCraftinator v" + getVersion() + ".");
         System.out.println("JARCraftinator is a Clout Team project");
         System.out.println("https://wwww.clout-team.com/");
         System.out.println();
@@ -98,6 +114,10 @@ public class JARCraftinator {
 
     public static Logger getLogger(){
         return logger;
+    }
+
+    public static String getVersion(){
+        return version;
     }
 
 }

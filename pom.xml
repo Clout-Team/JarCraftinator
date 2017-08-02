@@ -8,6 +8,13 @@
     <artifactId>JARCraftinator</artifactId>
     <version>0.0.1a-SNAPSHOT</version>
 
+    <name>JARCraftinator</name>
+    <description>A custom server software written by Clout Team.</description>
+    <organization>
+        <name>Clout Team Development</name>
+        <url>https://www.clout-team.com/</url>
+    </organization>
+
     <dependencies>
         <dependency>
             <groupId>com.esotericsoftware.yamlbeans</groupId>
@@ -39,9 +46,11 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
     </properties>
 
     <build>
+        <finalName>${project.name}-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -58,6 +67,22 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>com.cloutteam.jarcraftinator.JARCraftinator</mainClass>
+                            <addDefaultImplementationEntries>
+                                true
+                            </addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
             </plugin>
         </plugins>
     </build>
