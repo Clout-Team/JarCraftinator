@@ -1,9 +1,9 @@
 C:\Users\Sam Mearns\Desktop\JARCraftinator\src\main\java\com\cloutteam\jarcraftinator\api\LevelType.java
+C:\Users\Sam Mearns\Desktop\JARCraftinator\src\main\java\com\cloutteam\jarcraftinator\logging\Logger.java
 C:\Users\Sam Mearns\Desktop\JARCraftinator\src\main\java\com\cloutteam\jarcraftinator\protocol\packet\Packet.java
 C:\Users\Sam Mearns\Desktop\JARCraftinator\src\main\java\com\cloutteam\jarcraftinator\protocol\packet\PacketPlayInPlayerPositionAndLook.java
 C:\Users\Sam Mearns\Desktop\JARCraftinator\src\main\java\com\cloutteam\jarcraftinator\api\json\JSONArray.java
 C:\Users\Sam Mearns\Desktop\JARCraftinator\src\main\java\com\cloutteam\jarcraftinator\handler\ConnectionHandler.java
-C:\Users\Sam Mearns\Desktop\JARCraftinator\src\main\java\com\cloutteam\jarcraftinator\handler\PacketHandler.java
 C:\Users\Sam Mearns\Desktop\JARCraftinator\src\main\java\com\cloutteam\jarcraftinator\player\Player.java
 C:\Users\Sam Mearns\Desktop\JARCraftinator\src\main\java\com\cloutteam\jarcraftinator\protocol\MinecraftVersion.java
 C:\Users\Sam Mearns\Desktop\JARCraftinator\src\main\java\com\cloutteam\jarcraftinator\protocol\ConnectionState.java
@@ -14,6 +14,7 @@ C:\Users\Sam Mearns\Desktop\JARCraftinator\src\main\java\com\cloutteam\jarcrafti
 C:\Users\Sam Mearns\Desktop\JARCraftinator\src\main\java\com\cloutteam\jarcraftinator\api\ChatColor.java
 C:\Users\Sam Mearns\Desktop\JARCraftinator\src\main\java\com\cloutteam\jarcraftinator\api\json\JSONObject.java
 C:\Users\Sam Mearns\Desktop\JARCraftinator\src\main\java\com\cloutteam\jarcraftinator\utils\VarData.java
+C:\Users\Sam Mearns\Desktop\JARCraftinator\src\main\java\com\cloutteam\jarcraftinator\logging\LogLevel.java
 C:\Users\Sam Mearns\Desktop\JARCraftinator\src\main\java\com\cloutteam\jarcraftinator\protocol\packet\PacketOut.java
 C:\Users\Sam Mearns\Desktop\JARCraftinator\src\main\java\com\cloutteam\jarcraftinator\protocol\packet\PacketPlayInClientSettings.java
 C:\Users\Sam Mearns\Desktop\JARCraftinator\src\main\java\com\cloutteam\jarcraftinator\api\Difficulty.java

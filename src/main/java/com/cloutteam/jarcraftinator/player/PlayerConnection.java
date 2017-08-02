@@ -39,6 +39,7 @@ public class PlayerConnection extends Thread {
                 try {
                     int packetLength = VarData.readVarInt(in);
                     int packetId = VarData.readVarInt(in);
+
                     switch (connectionState) {
                         case HANDSHAKE:
                             switch (packetId) {
@@ -59,6 +60,7 @@ public class PlayerConnection extends Thread {
                                     // Empty packet
                                     // Send the response back to the client
                                     new PacketStatusOutResponse(MinecraftVersion.v1_12, JARCraftinator.getConfig().getInt("max-players"), 0, null, ChatColor.translateAlternateColorCodes(JARCraftinator.getConfig().getString("pinger.motd")), JARCraftinator.getConfig().getString("pinger.favicon")).send(out);
+                                    JARCraftinator.getLogger().log(socket.getInetAddress() + ":" + socket.getPort()  + " has pinged the server.");
                                     break;
                                 case 0x01:
                                     PacketStatusInPing ping = new PacketStatusInPing();
@@ -79,7 +81,10 @@ public class PlayerConnection extends Thread {
                                     new PacketLoginOutLoginSuccess(uuid, username).send(out);
                                     connectionState = ConnectionState.PLAY;
                                     new PacketPlayOutJoinGame(JARCraftinator.getNextEntityID(), GameMode.SURVIVAL, DimensionType.OVERWORLD, Difficulty.PEACEFUL, 10, LevelType.DEFAULT, false).send(out);
-                                    new PacketPlayOutSpawnPosition(0, 64, 0).send(out);
+                                    PacketPlayOutSpawnPosition spawnPacket = new PacketPlayOutSpawnPosition(0, 64, 0);
+                                    spawnPacket.send(out);
+                                    JARCraftinator.getLogger().log("Player " + username + " has logged in from " + socket.getInetAddress() + " with UUID " + uuid.toString() + ".");
+                                    JARCraftinator.getLogger().log(username + " has spawned at " + spawnPacket.getX() + " " + spawnPacket.getY() + " " + spawnPacket.getZ() + ".");
                                     break;
                                 case 0x01:
                                     // TODO encryption response
@@ -105,15 +110,15 @@ public class PlayerConnection extends Thread {
                                 case 0x0F:
                                     PacketPlayInPlayerPositionAndLook packetPlayInPlayerPositionAndLook = new PacketPlayInPlayerPositionAndLook();
                                     packetPlayInPlayerPositionAndLook.onReceive(packetLength, in);
-                                    JARCraftinator.getLogger().log("X: " + packetPlayInPlayerPositionAndLook.getX());
-                                    JARCraftinator.getLogger().log("Y: " + packetPlayInPlayerPositionAndLook.getY());
-                                    JARCraftinator.getLogger().log("Z: " + packetPlayInPlayerPositionAndLook.getZ());
+                                    JARCraftinator.getLogger().log("X: " + packetPlayInPlayerPositionAndLook.getX(), LogLevel.DEBUG);
+                                    JARCraftinator.getLogger().log("Y: " + packetPlayInPlayerPositionAndLook.getY(), LogLevel.DEBUG);
+                                    JARCraftinator.getLogger().log("Z: " + packetPlayInPlayerPositionAndLook.getZ(), LogLevel.DEBUG);
                                     break;
                             }
                             break;
                     }
                 } catch (EOFException | SocketException e) {
-                    JARCraftinator.getLogger().log("Error while receiving packet from " + socket.getInetAddress().toString() + "!\nClosing connection!", LogLevel.ERROR);
+                    JARCraftinator.getLogger().log("Error while receiving packet from " + socket.getInetAddress().toString() + "! Closing connection...", LogLevel.ERROR);
                     break;
                 } catch (Exception e) {
                     e.printStackTrace();

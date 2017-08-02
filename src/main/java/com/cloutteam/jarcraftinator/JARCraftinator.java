@@ -5,6 +5,7 @@ import com.cloutteam.jarcraftinator.handler.ConnectionHandler;
 import com.cloutteam.jarcraftinator.logging.LogLevel;
 import com.cloutteam.jarcraftinator.logging.Logger;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.Scanner;
@@ -67,6 +68,15 @@ public class JARCraftinator {
                 // Bye bye :)
                 System.out.println("Thanks for using JARCraftinator :)");
                 System.exit(0);
+            } else if (command.equalsIgnoreCase("reload")) {
+                logger.log("Reloading...");
+                try {
+                    config.loadConfig();
+                }catch(FileNotFoundException ex){
+                    logger.log("Unable to find configuration file!", LogLevel.CRITICAL);
+                    System.exit(1);
+                }
+                logger.log("Reload complete!");
             } else {
                 logger.log("Unknown command.");
             }
