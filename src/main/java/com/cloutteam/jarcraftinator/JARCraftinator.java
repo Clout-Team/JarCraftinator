@@ -3,6 +3,8 @@ package com.cloutteam.jarcraftinator;
 import com.cloutteam.jarcraftinator.config.FileConfiguration;
 import com.cloutteam.jarcraftinator.handler.ConnectionHandler;
 import com.cloutteam.jarcraftinator.handler.PacketHandler;
+import com.cloutteam.jarcraftinator.world.World;
+import com.cloutteam.jarcraftinator.world.WorldType;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -22,6 +24,8 @@ public class JARCraftinator {
     private static int nextTeleportID = 0;
 
     public static void main(String[] args) {
+        World world = new World("default");
+
         System.out.println("Welcome to JARCraftinator.");
         System.out.println("JARCraftinator is a Clout Team project");
         System.out.println("https://wwww.clout-team.com/");
