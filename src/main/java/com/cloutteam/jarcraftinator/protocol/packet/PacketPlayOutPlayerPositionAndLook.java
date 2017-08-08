@@ -83,7 +83,7 @@ public class PacketPlayOutPlayerPositionAndLook extends PacketOut {
     @Override
     public void send(DataOutputStream out) {
         try {
-            byte[] packetId = VarData.getVarInt(0x2E);
+            byte[] packetId = VarData.getVarInt(0x2F);
             byte[] teleportID = VarData.getVarInt(this.teleportID);
             VarData.writeVarInt(out, packetId.length + teleportID.length + 33);
             out.write(packetId);

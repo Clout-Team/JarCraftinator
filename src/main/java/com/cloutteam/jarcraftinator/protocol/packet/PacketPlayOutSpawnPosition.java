@@ -43,7 +43,7 @@ public class PacketPlayOutSpawnPosition extends PacketOut {
     @Override
     public void send(DataOutputStream out) {
         try {
-            byte[] packetId = VarData.getVarInt(0x45);
+            byte[] packetId = VarData.getVarInt(0x46);
             VarData.writeVarInt(out, packetId.length + 8);
             out.write(packetId);
             VarData.writePosition(out, x, y, z);

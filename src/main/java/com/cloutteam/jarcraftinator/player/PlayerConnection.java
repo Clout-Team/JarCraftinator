@@ -58,7 +58,7 @@ public class PlayerConnection extends Thread {
                                 case 0x00:
                                     // Empty packet
                                     // Send the response back to the client
-                                    new PacketStatusOutResponse(MinecraftVersion.v1_12, JARCraftinator.getConfig().getInt("max-players"), 0, null, ChatColor.translateAlternateColorCodes(JARCraftinator.getConfig().getString("pinger.motd")), JARCraftinator.getConfig().getString("pinger.favicon")).send(out);
+                                    new PacketStatusOutResponse(MinecraftVersion.v1_12_1, JARCraftinator.getConfig().getInt("max-players"), 0, null, ChatColor.translateAlternateColorCodes(JARCraftinator.getConfig().getString("pinger.motd")), JARCraftinator.getConfig().getString("pinger.favicon")).send(out);
                                     JARCraftinator.getLogger().log(socket.getInetAddress() + ":" + socket.getPort() + " has pinged the server.");
                                     break;
                                 case 0x01:
@@ -97,7 +97,7 @@ public class PlayerConnection extends Thread {
                                     teleportConfirm.onReceive(packetLength, in);
                                     JARCraftinator.getLogger().log("Confirmed teleportID: " + teleportConfirm.getTeleportID(), LogLevel.DEBUG);
                                     break;
-                                case 0x05:
+                                case 0x04:
                                     PacketPlayInClientSettings clientSettings = new PacketPlayInClientSettings();
                                     clientSettings.onReceive(packetLength, in);
                                     if (loggedIn)
@@ -106,7 +106,7 @@ public class PlayerConnection extends Thread {
                                     JARCraftinator.getLogger().log("Player's locale: " + clientSettings.getLocale(), LogLevel.DEBUG);
                                     new PacketPlayOutPlayerPositionAndLook(0, 64, 0, 0, 0, (byte) 0, JARCraftinator.getNextTeleportID()).send(out);
                                     break;
-                                case 0x0F:
+                                case 0x0E:
                                     PacketPlayInPlayerPositionAndLook packetPlayInPlayerPositionAndLook = new PacketPlayInPlayerPositionAndLook();
                                     packetPlayInPlayerPositionAndLook.onReceive(packetLength, in);
                                     JARCraftinator.getLogger().log("X: " + packetPlayInPlayerPositionAndLook.getX(), LogLevel.DEBUG);
