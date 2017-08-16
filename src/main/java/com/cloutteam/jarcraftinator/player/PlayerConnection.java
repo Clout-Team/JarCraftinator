@@ -8,6 +8,8 @@ import com.cloutteam.jarcraftinator.protocol.MinecraftVersion;
 import com.cloutteam.jarcraftinator.protocol.packet.*;
 import com.cloutteam.jarcraftinator.utils.UUIDManager;
 import com.cloutteam.jarcraftinator.utils.VarData;
+import com.cloutteam.jarcraftinator.world.Chunk;
+import com.cloutteam.jarcraftinator.world.World;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -79,7 +81,7 @@ public class PlayerConnection extends Thread {
                                     UUID uuid = UUIDManager.getUUID(username);
                                     new PacketLoginOutLoginSuccess(uuid, username).send(out);
                                     connectionState = ConnectionState.PLAY;
-                                    new PacketPlayOutJoinGame(JARCraftinator.getNextEntityID(), GameMode.SURVIVAL, DimensionType.OVERWORLD, Difficulty.PEACEFUL, 10, LevelType.DEFAULT, false).send(out);
+                                    new PacketPlayOutJoinGame(JARCraftinator.getNextEntityID(), GameMode.CREATIVE, DimensionType.OVERWORLD, Difficulty.PEACEFUL, 10, LevelType.DEFAULT, false).send(out);
                                     PacketPlayOutSpawnPosition spawnPacket = new PacketPlayOutSpawnPosition(0, 64, 0);
                                     spawnPacket.send(out);
                                     JARCraftinator.getLogger().log("Player " + username + " has logged in from " + socket.getInetAddress() + " with UUID " + uuid.toString() + ".");
@@ -104,7 +106,11 @@ public class PlayerConnection extends Thread {
                                         break;
                                     loggedIn = true;
                                     JARCraftinator.getLogger().log("Player's locale: " + clientSettings.getLocale(), LogLevel.DEBUG);
-                                    new PacketPlayOutPlayerPositionAndLook(0, 64, 0, 0, 0, (byte) 0, JARCraftinator.getNextTeleportID()).send(out);
+                                    new PacketPlayOutPlayerPositionAndLook(0, 128, 0, 0, 0, (byte) 0, JARCraftinator.getNextTeleportID()).send(out);
+                                    new PacketPlayOutChunkData(new Chunk(new World("world", DimensionType.OVERWORLD), 0, 0)).send(out);
+                                    new PacketPlayOutChunkData(new Chunk(new World("world", DimensionType.OVERWORLD), 1, 0)).send(out);
+                                    new PacketPlayOutChunkData(new Chunk(new World("world", DimensionType.OVERWORLD), 0, 1)).send(out);
+                                    new PacketPlayOutChunkData(new Chunk(new World("world", DimensionType.OVERWORLD), -1, -1)).send(out);
                                     break;
                                 case 0x0E:
                                     PacketPlayInPlayerPositionAndLook packetPlayInPlayerPositionAndLook = new PacketPlayInPlayerPositionAndLook();
@@ -114,7 +120,7 @@ public class PlayerConnection extends Thread {
                                     JARCraftinator.getLogger().log("Z: " + packetPlayInPlayerPositionAndLook.getZ(), LogLevel.DEBUG);
                                     break;
                                 default:
-                                    JARCraftinator.getLogger().log("Unknown packet ID: " + Integer.toHexString(packetId), LogLevel.DEBUG);
+                                    //JARCraftinator.getLogger().log("Unknown packet ID: " + Integer.toHexString(packetId), LogLevel.DEBUG);
                                     for (packetLength -= VarData.getVarInt(packetId).length; packetLength > 0; packetLength--)
                                         in.readByte();
 

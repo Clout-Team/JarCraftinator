@@ -23,3 +23,6 @@ hs_err_pid*
 test
 src/test/
 test/logs/
+
+# Server files
+server.yml
