@@ -26,7 +26,6 @@ public class PacketPlayOutChunkData extends PacketOut {
             // Send actual packet
             VarData.writeVarInt(out, byteArrayOutputStream.size());
             out.write(byteArrayOutputStream.toByteArray());
-            System.out.println(Arrays.toString(byteArrayOutputStream.toByteArray()));
             out.flush();
         } catch (Exception e) {
             e.printStackTrace();

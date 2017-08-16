@@ -45,14 +45,5 @@ public class Test {
     private static int getBit(int n, int k) {
         return (n >> k) & 1;
     }
-    
-    private void schedulerTesting(){
-        new ScheduledTask(){
-            @Override
-            public void run(){
-                
-            }
-        };
-    }
 
 }
