@@ -32,8 +32,6 @@ public class VarData {
     }
 
     public static void writeVarInt(DataOutputStream out, int paramInt) throws IOException {
-        System.out.println(paramInt);
-        int i = 0;
         do {
             byte temp = (byte) (paramInt & 0b01111111);
             // Note: >>> means that the sign bit is shifted with the rest of the number rather than being left alone
@@ -42,8 +40,6 @@ public class VarData {
                 temp |= 0b10000000;
             }
             out.writeByte(temp);
-            i++;
-            System.out.println("Found invalid length (write) " + i + " for byte " + temp);
         } while (paramInt != 0);
     }
 
@@ -149,15 +145,15 @@ public class VarData {
             for (int z = 0; z < SECTION_WIDTH; z++) {
                 for (int x = 0; x < SECTION_WIDTH; x++) {
                     currentState = section.getState(x, y, z);
-                    for (int i = 8; i >= 0; i--) {
-                        currentLong.append(getBit(currentState.getId(), i));
+                    for (int i = 0; i < 4; i++) {
+                        currentLong.insert(0, getBit(currentState.getMetadata(), i));
                         if (currentLong.length() == 64) {
                             blockData.add(parseLong(currentLong.toString()));
                             currentLong = new StringBuilder();
                         }
                     }
-                    for (int i = 3; i >= 0; i--) {
-                        currentLong.append(getBit(currentState.getMetadata(), i));
+                    for (int i = 0; i < 9; i++) {
+                        currentLong.insert(0, getBit(currentState.getId(), i));
                         if (currentLong.length() == 64) {
                             blockData.add(parseLong(currentLong.toString()));
                             currentLong = new StringBuilder();
@@ -167,7 +163,6 @@ public class VarData {
             }
         }
 
-        System.out.println("bD.s: " + blockData.size());
         writeVarInt(data, blockData.size());
         for (Long l : blockData)
             data.writeLong(l);
@@ -193,14 +188,6 @@ public class VarData {
                 }
             }
         }
-    }
-
-    private static int getGlobalPaletteIDFromState(BlockState state) {
-        // NOTE: This method will probably change in new versions
-        byte metadata = (byte) state.getMetadata();
-        int id = state.getId();
-
-        return id << 4 | metadata;
     }
 
     private static long parseLong(String s) {
