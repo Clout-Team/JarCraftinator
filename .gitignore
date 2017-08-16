@@ -27,3 +27,6 @@ test/logs/
 # Server files
 server.yml
 /JARCraftinator/nbproject/private/
+
+# macOS
+.DS_Store
