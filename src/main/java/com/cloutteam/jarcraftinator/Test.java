@@ -1,5 +1,6 @@
 package com.cloutteam.jarcraftinator;
 
+import com.cloutteam.jarcraftinator.api.scheduler.ScheduledTask;
 import com.cloutteam.jarcraftinator.world.BlockState;
 
 import java.math.BigInteger;
@@ -43,6 +44,15 @@ public class Test {
 
     private static int getBit(int n, int k) {
         return (n >> k) & 1;
+    }
+    
+    private void schedulerTesting(){
+        new ScheduledTask(){
+            @Override
+            public void run(){
+                
+            }
+        };
     }
 
 }

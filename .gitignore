@@ -26,3 +26,4 @@ test/logs/
 
 # Server files
 server.yml
+/JARCraftinator/nbproject/private/

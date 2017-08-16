@@ -1,5 +1,6 @@
 package com.cloutteam.jarcraftinator.player;
 
+import com.cloutteam.jarcraftinator.api.chat.ChatColor;
 import com.cloutteam.jarcraftinator.JARCraftinator;
 import com.cloutteam.jarcraftinator.api.*;
 import com.cloutteam.jarcraftinator.logging.LogLevel;
@@ -26,6 +27,7 @@ public class PlayerConnection extends Thread {
     private ConnectionState connectionState = ConnectionState.HANDSHAKE;
     private boolean loggedIn = false;
     private String username = "";
+    private UUID uuid; // TODO: Online-mode uuid support
 
     public PlayerConnection(Socket socket) {
         this.socket = socket;

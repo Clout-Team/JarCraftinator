@@ -5,7 +5,6 @@ import com.cloutteam.jarcraftinator.handler.ConnectionHandler;
 import com.cloutteam.jarcraftinator.logging.LogLevel;
 import com.cloutteam.jarcraftinator.logging.Logger;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;

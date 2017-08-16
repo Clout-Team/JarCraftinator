@@ -1,4 +1,4 @@
-package com.cloutteam.jarcraftinator.api;
+package com.cloutteam.jarcraftinator.api.chat;
 
 import java.util.regex.Pattern;
 

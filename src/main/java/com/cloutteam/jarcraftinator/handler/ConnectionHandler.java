@@ -10,7 +10,7 @@ import java.net.Socket;
 
 public class ConnectionHandler extends Thread {
 
-    private int port;
+    private final int port;
 
     public ConnectionHandler(int port){
         this.port = port;
