@@ -1,16 +1,14 @@
 package com.cloutteam.jarcraftinator.player;
 
-import com.cloutteam.jarcraftinator.api.chat.ChatColor;
 import com.cloutteam.jarcraftinator.JARCraftinator;
-import com.cloutteam.jarcraftinator.api.*;
+import com.cloutteam.jarcraftinator.api.chat.ChatColor;
 import com.cloutteam.jarcraftinator.logging.LogLevel;
 import com.cloutteam.jarcraftinator.protocol.ConnectionState;
 import com.cloutteam.jarcraftinator.protocol.MinecraftVersion;
 import com.cloutteam.jarcraftinator.protocol.packet.*;
 import com.cloutteam.jarcraftinator.utils.UUIDManager;
 import com.cloutteam.jarcraftinator.utils.VarData;
-import com.cloutteam.jarcraftinator.world.Chunk;
-import com.cloutteam.jarcraftinator.world.World;
+import com.cloutteam.jarcraftinator.world.*;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

@@ -1,7 +1,5 @@
 package com.cloutteam.jarcraftinator.world;
 
-import com.cloutteam.jarcraftinator.api.DimensionType;
-
 public class World {
 
     private final String name;

@@ -1,4 +1,4 @@
-package com.cloutteam.jarcraftinator.api;
+package com.cloutteam.jarcraftinator.world;
 
 public enum LevelType {
     DEFAULT("default"), FLAT("flat"), LARGE_BIOMES("largeBiomes"), AMPLIFIED("amplified"), DEFAULT_1_1("default_1_1");

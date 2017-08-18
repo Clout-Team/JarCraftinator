@@ -1,4 +1,4 @@
-package com.cloutteam.jarcraftinator.api;
+package com.cloutteam.jarcraftinator.world;
 
 public enum Difficulty {
     PEACEFUL(0), EASY(1), NORMAL(2), HARD(3);

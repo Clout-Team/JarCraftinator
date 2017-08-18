@@ -5,7 +5,6 @@ import com.cloutteam.jarcraftinator.world.Chunk;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.util.Arrays;
 
 public class PacketPlayOutChunkData extends PacketOut {
 

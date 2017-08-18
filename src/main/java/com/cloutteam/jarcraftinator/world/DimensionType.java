@@ -1,4 +1,4 @@
-package com.cloutteam.jarcraftinator.api;
+package com.cloutteam.jarcraftinator.world;
 
 public enum DimensionType {
     OVERWORLD(0), NETHER(-1), THE_END(1);
