@@ -1,8 +1,8 @@
 package com.cloutteam.jarcraftinator.handler;
 
 import com.cloutteam.jarcraftinator.JARCraftinator;
+import com.cloutteam.jarcraftinator.entity.player.PlayerConnection;
 import com.cloutteam.jarcraftinator.logging.LogLevel;
-import com.cloutteam.jarcraftinator.player.PlayerConnection;
 
 import java.io.IOException;
 import java.net.ServerSocket;

@@ -14,6 +14,6 @@ public interface RepeatingTask {
     /**
      * The code that you want to repeat.
      */
-    public void run();
+    void run();
     
 }

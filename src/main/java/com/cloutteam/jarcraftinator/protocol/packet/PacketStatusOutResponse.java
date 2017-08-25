@@ -1,7 +1,7 @@
 package com.cloutteam.jarcraftinator.protocol.packet;
 
 import com.cloutteam.jarcraftinator.api.json.JSONObject;
-import com.cloutteam.jarcraftinator.player.Player;
+import com.cloutteam.jarcraftinator.entity.player.Player;
 import com.cloutteam.jarcraftinator.protocol.MinecraftVersion;
 import com.cloutteam.jarcraftinator.utils.VarData;
 
@@ -93,7 +93,7 @@ public class PacketStatusOutResponse extends PacketOut {
     /**
      * Gets the online player list.
      *
-     * @return A @link{java.util.List} containing all the @link{com.cloutteam.jarcraftinator.player.Player Players}. Can be null.
+     * @return A @link{java.util.List} containing all the @link{com.cloutteam.jarcraftinator.entity.player.Player Players}. Can be null.
      */
     public List<Player> getPlayerList() {
         return playerList;

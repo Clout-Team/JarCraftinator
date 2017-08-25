@@ -14,4 +14,11 @@ public class World {
         return type == DimensionType.OVERWORLD;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public DimensionType getType() {
+        return type;
+    }
 }

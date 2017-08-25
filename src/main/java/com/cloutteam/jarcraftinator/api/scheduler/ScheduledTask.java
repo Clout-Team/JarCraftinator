@@ -14,6 +14,6 @@ public interface ScheduledTask {
     /**
      * The code that you want to schedule.
      */
-    public void run();
+    void run();
     
 }

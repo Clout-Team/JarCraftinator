@@ -1,4 +1,4 @@
-package com.cloutteam.jarcraftinator.player;
+package com.cloutteam.jarcraftinator.entity.player;
 
 public enum GameMode {
     SURVIVAL(0), CREATIVE(1), ADVENTURE(2), SPECTATOR(3);

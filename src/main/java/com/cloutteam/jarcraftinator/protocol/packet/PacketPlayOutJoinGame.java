@@ -1,6 +1,6 @@
 package com.cloutteam.jarcraftinator.protocol.packet;
 
-import com.cloutteam.jarcraftinator.player.GameMode;
+import com.cloutteam.jarcraftinator.entity.player.GameMode;
 import com.cloutteam.jarcraftinator.utils.VarData;
 import com.cloutteam.jarcraftinator.world.Difficulty;
 import com.cloutteam.jarcraftinator.world.DimensionType;

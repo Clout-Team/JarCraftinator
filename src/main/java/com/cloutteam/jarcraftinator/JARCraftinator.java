@@ -4,6 +4,9 @@ import com.cloutteam.jarcraftinator.config.FileConfiguration;
 import com.cloutteam.jarcraftinator.handler.ConnectionHandler;
 import com.cloutteam.jarcraftinator.logging.LogLevel;
 import com.cloutteam.jarcraftinator.logging.Logger;
+import com.cloutteam.jarcraftinator.manager.ConfigManager;
+import com.cloutteam.jarcraftinator.manager.PlayerManager;
+import com.cloutteam.jarcraftinator.manager.TeleportManager;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -14,16 +17,18 @@ import java.util.Scanner;
 
 public class JARCraftinator {
 
-    private static boolean running = true;
-    private static FileConfiguration config;
-    private static Logger logger;
-    private static String version;
+    private static JARCraftinator instance;
 
-    private static int nextEntityID = 0;
-    private static int nextTeleportID = 0;
+    private boolean running = true;
+    private FileConfiguration config;
+    private ConfigManager configManager;
+    private Logger logger;
+    private String version;
+    private TeleportManager teleportManager;
+    private PlayerManager playerManager;
 
-    public static void main(String[] args) {
-
+    private JARCraftinator() {
+        instance = this;
         // TODO: Track latest version from http://api.clout-team.com/verdigris/version/
 
         try {
@@ -32,7 +37,7 @@ public class JARCraftinator {
             Properties properties = new Properties();
             properties.load(stream);
             version = (String) properties.get("version");
-        }catch(IOException | NullPointerException ex ){
+        } catch (IOException | NullPointerException ex) {
             version = "Unknown";
         }
 
@@ -49,6 +54,7 @@ public class JARCraftinator {
             config = new FileConfiguration("server.yml");
             config.saveDefaultConfig(JARCraftinator.class.getResourceAsStream("/server.yml"));
             config.loadConfig();
+            configManager = new ConfigManager(config);
             logger.log("Loaded settings.");
         } catch (IOException ex) {
             logger.log("Unable load server properties. Please double-check your syntax (remember: no tabs in a YAML file, only spaces).", LogLevel.CRITICAL);
@@ -57,15 +63,21 @@ public class JARCraftinator {
 
         // Check the port before the server starts
         try {
-            ServerSocket portCheck = new ServerSocket(getConfig().getInt("port"));
+            ServerSocket portCheck = new ServerSocket(configManager.getPort());
             portCheck.close();
-        }catch(IOException ex){
-            logger.log("Port " + getConfig().getInt("port") + " is already in use!\n\nCheck that:\n1. There isn't another application running on port " + getConfig().getInt("port") + ".\n2. There aren't other instances of the server still running.", LogLevel.CRITICAL);
+        } catch (IOException ex) {
+            logger.log("Port " + configManager.getPort() + " is already in use!\n\nCheck that:\n1. There isn't another application running on port " + configManager.getPort() + ".\n2. There aren't other instances of the server still running.", LogLevel.CRITICAL);
             System.exit(1);
         }
 
         logger.log("Starting server...");
-        new ConnectionHandler(getConfig().getInt("port")).start();
+        new ConnectionHandler(configManager.getPort()).start();
+
+        logger.log("Loading teleport manager...");
+        teleportManager = new TeleportManager();
+
+        logger.log("Loading player manager...");
+        playerManager = new PlayerManager();
 
         // Now start the CLI
         Scanner scanner = new Scanner(System.in);
@@ -88,7 +100,7 @@ public class JARCraftinator {
                 logger.log("Reloading...");
                 try {
                     config.loadConfig();
-                }catch(FileNotFoundException ex){
+                } catch (FileNotFoundException ex) {
                     logger.log("Unable to find configuration file!", LogLevel.CRITICAL);
                     System.exit(1);
                 }
@@ -97,27 +109,30 @@ public class JARCraftinator {
                 logger.log("Unknown command.");
             }
         }
-
     }
 
-    public static FileConfiguration getConfig() {
-        return config;
+    public static void main(String[] args) {
+        new JARCraftinator();
     }
 
-    public static int getNextEntityID() {
-        return nextEntityID++;
+    public static ConfigManager getConfig() {
+        return instance.configManager;
     }
 
-    public static int getNextTeleportID() {
-        return nextTeleportID++;
+    public static Logger getLogger() {
+        return instance.logger;
     }
 
-    public static Logger getLogger(){
-        return logger;
+    public static String getVersion() {
+        return instance.version;
     }
 
-    public static String getVersion(){
-        return version;
+    public static TeleportManager getTeleportManager() {
+        return instance.teleportManager;
+    }
+
+    public static PlayerManager getPlayerManager() {
+        return instance.playerManager;
     }
 
 }

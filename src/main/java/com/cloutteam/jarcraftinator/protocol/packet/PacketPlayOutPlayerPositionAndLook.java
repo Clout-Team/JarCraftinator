@@ -1,6 +1,7 @@
 package com.cloutteam.jarcraftinator.protocol.packet;
 
 import com.cloutteam.jarcraftinator.utils.VarData;
+import com.cloutteam.jarcraftinator.world.navigation.Location;
 
 import java.io.DataOutputStream;
 
@@ -20,6 +21,16 @@ public class PacketPlayOutPlayerPositionAndLook extends PacketOut {
         this.z = z;
         this.yaw = yaw;
         this.pitch = pitch;
+        this.flags = flags;
+        this.teleportID = teleportID;
+    }
+
+    public PacketPlayOutPlayerPositionAndLook(Location location, byte flags, int teleportID) {
+        this.x = location.getX();
+        this.y = location.getY();
+        this.z = location.getZ();
+        this.yaw = location.getYaw();
+        this.pitch = location.getPitch();
         this.flags = flags;
         this.teleportID = teleportID;
     }
