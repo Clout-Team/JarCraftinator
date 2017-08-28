@@ -60,7 +60,7 @@ public class Logger {
 
         try {
             String logmsg = message;
-            if(JARCraftinator.getConfig() != null && JARCraftinator.getConfig().getBoolean("logging.strip-ansi-escape")){
+            if(JARCraftinator.getConfig() != null && JARCraftinator.getConfig().isStripAnsiEscape()){
                 logmsg = logmsg.replaceAll("\u001B\\[[\\d;]*[^\\d;]","");
                 logmsg = logmsg.replaceAll("\\e\\[[\\d;]*[^\\d;]","");
             }
@@ -78,7 +78,7 @@ public class Logger {
 
         switch(level){
             case DEBUG:
-                if(JARCraftinator.getConfig().getBoolean("logging.debug")) {
+                if(JARCraftinator.getConfig().isDebug()) {
                     System.out.println(timestamp + prefix + message + ansi().reset());
                 }
                 break;

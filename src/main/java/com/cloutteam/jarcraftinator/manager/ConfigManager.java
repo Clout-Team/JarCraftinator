@@ -7,6 +7,9 @@ public class ConfigManager {
     private final FileConfiguration config;
 
     private boolean onlineMode;
+
+    private boolean stripAnsiEscape;
+    private boolean debug;
     private int port;
     private int maxPlayers;
     private String motd;
@@ -23,11 +26,17 @@ public class ConfigManager {
         maxPlayers = config.getInt("max-players", 20);
         motd = config.getString("pinger.motd", "Minecraft Server");
         favicon = config.getString("pinger.favicon", "");
+        stripAnsiEscape = config.getBoolean("logging.strip-ansi-escape");
+        debug = config.getBoolean("logging.debug");
     }
 
     public boolean isOnlineMode() {
         return onlineMode;
     }
+
+    public boolean isStripAnsiEscape() {  return stripAnsiEscape; }
+
+    public boolean isDebug() {  return debug; }
 
     public int getPort() {
         return port;
