@@ -1,8 +1,8 @@
 package com.cloutteam.jarcraftinator.api.chat;
 
-import java.util.regex.Pattern;
-
 public class ChatColor {
+
+    public static final String VALID_COLOR_CODES = "0123456789AaBbCcDdEeFfKkLlMmNnOoRr";
 
     /**
      * Translates a string with a certain character (most commonly used is &amp;) to a Minecraft color coded string.
@@ -11,7 +11,7 @@ public class ChatColor {
      * @return The colorized text.
      */
     public static String translateAlternateColorCodes(String text){
-        return text.replaceAll(Pattern.quote("&"), "\u00A7");
+        return translateAlternateColorCodes('&', text);
     }
 
     /**
@@ -23,8 +23,18 @@ public class ChatColor {
      * @return The colorized text.
      */
     public static String translateAlternateColorCodes(char symbol, String text){
-        // Replace symbol of choice with Sectional Symbol
-        return text.replaceAll(Pattern.quote(String.valueOf(symbol)), "\u00A7");
+        char[] input = text.toCharArray();
+        for(int i = 0; i < input.length - 1; i++){
+            // If this is a color symbol, is the next letter a valid color code symbol
+            if(input[i] == symbol && VALID_COLOR_CODES.indexOf(input[i + 1]) > -1){
+                // Replace this character with the sectional symbol
+                input[i] = '\u00A7';
+                // and ensure the next character is lowercase.
+                input[i + 1] = Character.toLowerCase(input[i + 1]);
+            }
+        }
+
+        return new String(input);
     }
 
 }

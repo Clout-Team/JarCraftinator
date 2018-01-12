@@ -66,7 +66,14 @@ public class PlayerConnection extends Thread {
                                 case 0x00:
                                     // Empty packet
                                     // Send the response back to the client
-                                    new PacketStatusOutResponse(MinecraftVersion.v1_12_1, JARCraftinator.getConfig().getMaxPlayers(), 0, null, ChatColor.translateAlternateColorCodes(JARCraftinator.getConfig().getMotd()), JARCraftinator.getConfig().getFavicon()).send(out);
+                                    new PacketStatusOutResponse(
+                                            MinecraftVersion.v1_12_1,
+                                            JARCraftinator.getConfig().getMaxPlayers(),
+                                            0,
+                                            null,
+                                            ChatColor.translateAlternateColorCodes(JARCraftinator.getConfig().getMotd()),
+                                            JARCraftinator.getConfig().getFavicon()).send(out);
+
                                     JARCraftinator.getLogger().log(socket.getInetAddress() + ":" + socket.getPort() + " has pinged the server.");
                                     break;
                                 case 0x01:
@@ -94,8 +101,8 @@ public class PlayerConnection extends Thread {
                                     new PacketPlayOutJoinGame(player.getEntityId(), GameMode.CREATIVE, DimensionType.OVERWORLD, Difficulty.PEACEFUL, 10, LevelType.DEFAULT, false).send(out);
                                     PacketPlayOutSpawnPosition spawnPacket = new PacketPlayOutSpawnPosition(0, 64, 0);
                                     spawnPacket.send(out);
-                                    JARCraftinator.getLogger().log("Player " + username + " has logged in from " + socket.getInetAddress() + " with UUID " + uuid.toString() + ".");
-                                    JARCraftinator.getLogger().log(username + " has spawned at " + spawnPacket.getX() + " " + spawnPacket.getY() + " " + spawnPacket.getZ() + ".");
+                                    JARCraftinator.getLogger().log("Player " + username + " has logged in from " + socket.getInetAddress() + ":" + socket.getPort() + " with UUID " + uuid.toString() + ".");
+                                    JARCraftinator.getLogger().log(username + " has spawned on the server at (" + spawnPacket.getX() + ", " + spawnPacket.getY() + ", " + spawnPacket.getZ() + ").");
                                     break;
                                 case 0x01:
                                     // TODO encryption response
@@ -125,6 +132,9 @@ public class PlayerConnection extends Thread {
                                     for (int x = chunkX - clientSettings.getViewDistance(); x < chunkX + clientSettings.getViewDistance(); x++)
                                         for (int z = chunkZ - clientSettings.getViewDistance(); z < chunkZ + clientSettings.getViewDistance(); z++)
                                             new PacketPlayOutChunkData(new Chunk(player.getLocation().getWorld(), x, z)).send(out);
+
+                                    // Start the KeepAlive runnable!
+                                    new PlayerKeepAlive(this);
                                     break;
                                 case 0x0E:
                                     PacketPlayInPlayerPositionAndLook packetPlayInPlayerPositionAndLook = new PacketPlayInPlayerPositionAndLook();
@@ -148,6 +158,11 @@ public class PlayerConnection extends Thread {
                     e.printStackTrace();
                 }
             }
+
+            if(loggedIn) {
+                JARCraftinator.getLogger().log(getName() + " has quit the server!");
+                loggedIn = false;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -167,5 +182,9 @@ public class PlayerConnection extends Thread {
 
     public Player getPlayer() {
         return player;
+    }
+
+    boolean isLoggedIn(){
+        return loggedIn;
     }
 }

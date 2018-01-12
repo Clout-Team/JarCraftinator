@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.Timer;
 
 public class JARCraftinator {
 
@@ -26,6 +27,7 @@ public class JARCraftinator {
     private String version;
     private TeleportManager teleportManager;
     private PlayerManager playerManager;
+    private Timer timer;
 
     private JARCraftinator() {
         instance = this;
@@ -72,6 +74,9 @@ public class JARCraftinator {
 
         logger.log("Starting server...");
         new ConnectionHandler(configManager.getPort()).start();
+
+        logger.log("Starting scheduler...");
+        timer = new Timer();
 
         logger.log("Loading teleport manager...");
         teleportManager = new TeleportManager();
@@ -133,6 +138,10 @@ public class JARCraftinator {
 
     public static PlayerManager getPlayerManager() {
         return instance.playerManager;
+    }
+
+    public static Timer getTimer(){
+        return instance.timer;
     }
 
 }
