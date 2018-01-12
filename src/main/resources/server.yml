@@ -1,10 +1,10 @@
 # JARCraftinator
-# a Clout Team project: https://www.clout-team.com/
+# Created by Clout Team: https://www.clout-team.com/
 
 # General properties
 max-players: 10
 port: 25565
-online-mode: false
+online-mode: false # Not yet finished
 
 # Server list properties
 pinger:
@@ -16,6 +16,6 @@ pinger:
 logging:
   # Whether or not debug messages should be logged to the console. (Note, these won't be logged to the file)
   debug: false
-  # Whether or not ANSI escape codes should be stripped from the file. (Logs are easier to read when off but you may
-  # want to turn this on for a web-based panel or color log viewer)
+  # Whether or not ANSI escape codes should be stripped from the file. (Logs are easier to read when on but you may
+  # want to turn this off for a web-based panel or color-enabled log viewer)
   strip-ansi-escape: true

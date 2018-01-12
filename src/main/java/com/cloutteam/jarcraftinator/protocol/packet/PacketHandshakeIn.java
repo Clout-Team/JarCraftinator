@@ -1,8 +1,10 @@
 package com.cloutteam.jarcraftinator.protocol.packet;
 
+import com.cloutteam.jarcraftinator.exceptions.IOWriteException;
 import com.cloutteam.jarcraftinator.utils.VarData;
 
 import java.io.DataInputStream;
+import java.io.IOException;
 
 public class PacketHandshakeIn extends PacketIn {
 
@@ -12,7 +14,7 @@ public class PacketHandshakeIn extends PacketIn {
     private NextState nextState;
 
     @Override
-    public void onReceive(int length, DataInputStream in) throws Exception {
+    public void onReceive(int length, DataInputStream in) throws IOException, IOWriteException {
         clientVersion = VarData.readVarInt(in);
         address = VarData.readVarString(in, VarData.readVarInt(in));
         port = in.readUnsignedShort();

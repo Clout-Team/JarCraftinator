@@ -4,6 +4,7 @@ import com.cloutteam.jarcraftinator.utils.VarData;
 import com.cloutteam.jarcraftinator.world.navigation.Location;
 
 import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class PacketPlayOutPlayerPositionAndLook extends PacketOut {
 
@@ -92,22 +93,18 @@ public class PacketPlayOutPlayerPositionAndLook extends PacketOut {
     }
 
     @Override
-    public void send(DataOutputStream out) {
-        try {
-            byte[] packetId = VarData.getVarInt(0x2F);
-            byte[] teleportID = VarData.getVarInt(this.teleportID);
-            VarData.writeVarInt(out, packetId.length + teleportID.length + 33);
-            out.write(packetId);
-            out.writeDouble(x);
-            out.writeDouble(y);
-            out.writeDouble(z);
-            out.writeFloat(yaw);
-            out.writeFloat(pitch);
-            out.writeByte(flags);
-            out.write(teleportID);
-            out.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void send(DataOutputStream out) throws IOException {
+        byte[] packetId = VarData.getVarInt(0x2F);
+        byte[] teleportID = VarData.getVarInt(this.teleportID);
+        VarData.writeVarInt(out, packetId.length + teleportID.length + 33);
+        out.write(packetId);
+        out.writeDouble(x);
+        out.writeDouble(y);
+        out.writeDouble(z);
+        out.writeFloat(yaw);
+        out.writeFloat(pitch);
+        out.writeByte(flags);
+        out.write(teleportID);
+        out.flush();
     }
 }

@@ -7,6 +7,7 @@ import com.cloutteam.jarcraftinator.logging.Logger;
 import com.cloutteam.jarcraftinator.manager.ConfigManager;
 import com.cloutteam.jarcraftinator.manager.PlayerManager;
 import com.cloutteam.jarcraftinator.manager.TeleportManager;
+import com.cloutteam.jarcraftinator.protocol.MinecraftVersion;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -18,6 +19,7 @@ import java.util.Timer;
 
 public class JARCraftinator {
 
+    public static final MinecraftVersion protocolVersion = MinecraftVersion.v1_12_2;
     private static JARCraftinator instance;
 
     private boolean running = true;
@@ -43,7 +45,8 @@ public class JARCraftinator {
             version = "Unknown";
         }
 
-        System.out.println("Welcome to JARCraftinator v" + getVersion() + ".");
+        System.out.println("Welcome to JARCraftinator v" + getVersion() + " (Minecraft " +
+                protocolVersion.getName() + ").");
         System.out.println("JARCraftinator is a Clout Team project");
         System.out.println("https://wwww.clout-team.com/");
         System.out.println();
@@ -91,6 +94,10 @@ public class JARCraftinator {
             String command = scanner.nextLine();
 
             if (command.equalsIgnoreCase("stop")) {
+                // End the timer
+                logger.log("Closing scheduler...");
+                timer.cancel();
+
                 // Stop the server
                 logger.log("Stopping server...");
                 running = false;

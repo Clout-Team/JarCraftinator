@@ -2,6 +2,7 @@ package com.cloutteam.jarcraftinator.entity.player;
 
 import com.cloutteam.jarcraftinator.JARCraftinator;
 import com.cloutteam.jarcraftinator.api.chat.ChatColor;
+import com.cloutteam.jarcraftinator.exceptions.IOWriteException;
 import com.cloutteam.jarcraftinator.logging.LogLevel;
 import com.cloutteam.jarcraftinator.protocol.ConnectionState;
 import com.cloutteam.jarcraftinator.protocol.MinecraftVersion;
@@ -42,84 +43,126 @@ public class PlayerConnection extends Thread {
         try {
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
-            while (!socket.isClosed()) {
-                try {
-                    int packetLength = VarData.readVarInt(in);
-                    int packetId = VarData.readVarInt(in);
+        }catch(IOException ex){
+            JARCraftinator.getLogger().log("Unable to initiate two-way contact with " + socket.getInetAddress()
+             + ":" + socket.getPort() + ". (" + ex.getMessage() + ")!", LogLevel.ERROR);
 
-                    switch (connectionState) {
-                        case HANDSHAKE:
-                            switch (packetId) {
-                                case 0x00:
+            try {
+                if(!socket.isClosed()) {
+                    socket.close();
+                }
+            }catch(IOException exception){
+                JARCraftinator.getLogger().log("Additionally, an error occured whilst trying to close the " +
+                    "connection. (" + exception.getMessage() + ")", LogLevel.ERROR);
+            }
+
+            interrupt();
+            return;
+        }
+
+        while (!socket.isClosed()) {
+            try {
+                int packetLength = VarData.readVarInt(in);
+                int packetId = VarData.readVarInt(in);
+
+                switch (connectionState) {
+                    case HANDSHAKE:
+                        switch (packetId) {
+                            case 0x00:
+                                try {
                                     // Receive the handshake and set the next status
                                     PacketHandshakeIn handshake = new PacketHandshakeIn();
                                     handshake.onReceive(packetLength, in);
                                     connectionState = handshake.getNextState() == PacketHandshakeIn.NextState.LOGIN ? ConnectionState.LOGIN : ConnectionState.STATUS;
-                                    break;
-                                case 0xFE:
-                                    // TODO legacy ping
-                                    break;
-                            }
-                            break;
-                        case STATUS:
-                            switch (packetId) {
-                                case 0x00:
-                                    // Empty packet
-                                    // Send the response back to the client
-                                    new PacketStatusOutResponse(
-                                            MinecraftVersion.v1_12_1,
-                                            JARCraftinator.getConfig().getMaxPlayers(),
-                                            0,
-                                            null,
-                                            ChatColor.translateAlternateColorCodes(JARCraftinator.getConfig().getMotd()),
-                                            JARCraftinator.getConfig().getFavicon()).send(out);
+                                }catch(IOException | IOWriteException ex){
+                                    JARCraftinator.getLogger().log("Failed to handshake with " +
+                                            socket.getInetAddress() + ":" + socket.getPort(), LogLevel.ERROR);
+                                    JARCraftinator.getLogger().log(ex.getMessage(), LogLevel.DEBUG);
+                                }
+                                break;
+                            case 0xFE:
+                                // TODO legacy ping
+                                break;
+                        }
+                        break;
+                    case STATUS:
+                        switch (packetId) {
+                            case 0x00:
+                                // Empty packet
+                                // Send the response back to the client
+                                new PacketStatusOutResponse(
+                                        JARCraftinator.protocolVersion,
+                                        JARCraftinator.getConfig().getMaxPlayers(),
+                                        0,
+                                        null,
+                                        ChatColor.translateAlternateColorCodes(JARCraftinator.getConfig().getMotd()),
+                                        JARCraftinator.getConfig().getFavicon()).send(out);
 
-                                    JARCraftinator.getLogger().log(socket.getInetAddress() + ":" + socket.getPort() + " has pinged the server.");
-                                    break;
-                                case 0x01:
+                                JARCraftinator.getLogger().log(socket.getInetAddress() + ":" + socket.getPort() + " has pinged the server.");
+                                break;
+                            case 0x01:
+                                try {
                                     PacketStatusInPing ping = new PacketStatusInPing();
                                     ping.onReceive(packetLength, in);
                                     new PacketStatusOutPong(ping.getLength(), ping.getData()).send(out);
                                     socket.close();
-                                    break;
-                            }
-                            break;
-                        case LOGIN:
-                            switch (packetId) {
-                                case 0x00:
+                                }catch(IOException ex){
+                                    JARCraftinator.getLogger().log("Error whilst handling server ping (" +
+                                        ex.getMessage() + ")", LogLevel.DEBUG);
+                                }
+                                break;
+                        }
+                        break;
+                    case LOGIN:
+                        switch (packetId) {
+                            case 0x00:
+                                String username;
+
+                                try {
                                     PacketLoginInLoginStart login = new PacketLoginInLoginStart();
                                     login.onReceive(packetLength, in);
-                                    String username = login.getPlayerName();
-
-                                    UUID uuid = UUIDManager.getUUID(username);
-
-                                    player = new Player(username, uuid, this);
-                                    player.loadFromStorage();
-                                    JARCraftinator.getPlayerManager().addOnline(player);
-                                    new PacketLoginOutLoginSuccess(uuid, username).send(out);
-                                    connectionState = ConnectionState.PLAY;
-                                    new PacketPlayOutJoinGame(player.getEntityId(), GameMode.CREATIVE, DimensionType.OVERWORLD, Difficulty.PEACEFUL, 10, LevelType.DEFAULT, false).send(out);
-                                    PacketPlayOutSpawnPosition spawnPacket = new PacketPlayOutSpawnPosition(0, 64, 0);
-                                    spawnPacket.send(out);
-                                    JARCraftinator.getLogger().log("Player " + username + " has logged in from " + socket.getInetAddress() + ":" + socket.getPort() + " with UUID " + uuid.toString() + ".");
-                                    JARCraftinator.getLogger().log(username + " has spawned on the server at (" + spawnPacket.getX() + ", " + spawnPacket.getY() + ", " + spawnPacket.getZ() + ").");
+                                    username = login.getPlayerName();
+                                }catch(IOException ex){
+                                    JARCraftinator.getLogger().log("Error whilst handling player login (" +
+                                            ex.getMessage() + ")", LogLevel.DEBUG);
                                     break;
-                                case 0x01:
-                                    // TODO encryption response
-                                    break;
-                            }
-                            break;
-                        case PLAY:
-                            switch (packetId) {
-                                case 0x00:
+                                }
+
+                                UUID uuid = UUIDManager.getUUID(username);
+
+                                player = new Player(username, uuid, this);
+                                player.loadFromStorage();
+                                JARCraftinator.getPlayerManager().addOnline(player);
+                                new PacketLoginOutLoginSuccess(uuid, username).send(out);
+                                connectionState = ConnectionState.PLAY;
+                                new PacketPlayOutJoinGame(player.getEntityId(), GameMode.CREATIVE, DimensionType.OVERWORLD, Difficulty.PEACEFUL, 10, LevelType.DEFAULT, false).send(out);
+                                PacketPlayOutSpawnPosition spawnPacket = new PacketPlayOutSpawnPosition(0, 64, 0);
+                                spawnPacket.send(out);
+                                JARCraftinator.getLogger().log("Player " + username + " has logged in from " + socket.getInetAddress() + ":" + socket.getPort() + " with UUID " + uuid.toString() + ".");
+                                JARCraftinator.getLogger().log(username + " has spawned on the server at (" + spawnPacket.getX() + ", " + spawnPacket.getY() + ", " + spawnPacket.getZ() + ").");
+                                break;
+                            case 0x01:
+                                // TODO encryption response
+                                break;
+                        }
+                        break;
+                    case PLAY:
+                        switch (packetId) {
+                            case 0x00:
+                                try {
                                     PacketPlayInTeleportConfirm teleportConfirm = new PacketPlayInTeleportConfirm();
                                     teleportConfirm.onReceive(packetLength, in);
                                     if (JARCraftinator.getTeleportManager().confirmTeleport(teleportConfirm.getTeleportID()))
                                         JARCraftinator.getLogger().log("Confirmed teleport: " + teleportConfirm.getTeleportID(), LogLevel.DEBUG);
                                     else
                                         JARCraftinator.getLogger().log("Failed to confirm teleport " + teleportConfirm.getTeleportID() + " because it's either already confirmed or it doesn't exist.", LogLevel.DEBUG);
-                                    break;
-                                case 0x04:
+                                }catch (IOException ex){
+                                    JARCraftinator.getLogger().log("Error whilst confirming teleportation (" +
+                                            ex.getMessage() + ")", LogLevel.DEBUG);
+                                }
+                                break;
+                            case 0x04:
+                                try {
                                     PacketPlayInClientSettings clientSettings = new PacketPlayInClientSettings();
                                     clientSettings.onReceive(packetLength, in);
                                     if (loggedIn)
@@ -135,37 +178,51 @@ public class PlayerConnection extends Thread {
 
                                     // Start the KeepAlive runnable!
                                     new PlayerKeepAlive(this);
-                                    break;
-                                case 0x0E:
+                                }catch(IOException ex){
+                                    JARCraftinator.getLogger().log("Error whilst handling client settings packet (" +
+                                            ex.getMessage() + ")", LogLevel.DEBUG);
+                                }
+                                break;
+                            case 0x0E:
+                                try {
                                     PacketPlayInPlayerPositionAndLook packetPlayInPlayerPositionAndLook = new PacketPlayInPlayerPositionAndLook();
                                     packetPlayInPlayerPositionAndLook.onReceive(packetLength, in);
                                     JARCraftinator.getLogger().log("X: " + packetPlayInPlayerPositionAndLook.getX(), LogLevel.DEBUG);
                                     JARCraftinator.getLogger().log("Y: " + packetPlayInPlayerPositionAndLook.getY(), LogLevel.DEBUG);
                                     JARCraftinator.getLogger().log("Z: " + packetPlayInPlayerPositionAndLook.getZ(), LogLevel.DEBUG);
-                                    break;
-                                default:
-                                    //JARCraftinator.getLogger().log("Unknown packet ID: " + Integer.toHexString(packetId), LogLevel.DEBUG);
+                                }catch(IOException ex){
+                                    JARCraftinator.getLogger().log("Error whilst handling player move packet (" +
+                                        ex.getMessage() + ")", LogLevel.DEBUG);
+                                }
+                                break;
+                            default:
+                                // JARCraftinator.getLogger().log("Unknown packet ID: " + Integer.toHexString(packetId), LogLevel.DEBUG);
+                                try {
                                     for (packetLength -= VarData.getVarInt(packetId).length; packetLength > 0; packetLength--)
                                         in.readByte();
+                                }catch(IOException ex){
+                                    ex.printStackTrace();
+                                }
 
-                            }
-                            break;
-                    }
-                } catch (EOFException | SocketException e) {
-                    JARCraftinator.getLogger().log("Error while receiving packet from " + socket.getInetAddress().toString() + "! Closing connection...", LogLevel.ERROR);
+                        }
+                        break;
+                }
+            } catch (EOFException | SocketException e) {
+                JARCraftinator.getLogger().log("Error while receiving packet from " + socket.getInetAddress().toString() + "! Ignoring...", LogLevel.DEBUG);
+                break;
+            } catch (IOException ex){
+                if(socket.isClosed()){
                     break;
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
-
-            if(loggedIn) {
-                JARCraftinator.getLogger().log(getName() + " has quit the server!");
-                loggedIn = false;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+
+        if (loggedIn) {
+            JARCraftinator.getLogger().log(getPlayer().getName() + " has quit the server!");
+            loggedIn = false;
+        }
+
+        interrupt();
     }
 
     public ConnectionState getConnectionState() {
@@ -184,7 +241,7 @@ public class PlayerConnection extends Thread {
         return player;
     }
 
-    boolean isLoggedIn(){
+    boolean isLoggedIn() {
         return loggedIn;
     }
 }

@@ -3,6 +3,7 @@ package com.cloutteam.jarcraftinator.protocol.packet;
 import com.cloutteam.jarcraftinator.utils.VarData;
 
 import java.io.DataInputStream;
+import java.io.IOException;
 
 public class PacketLoginInLoginStart extends PacketIn {
 
@@ -13,7 +14,7 @@ public class PacketLoginInLoginStart extends PacketIn {
     }
 
     @Override
-    public void onReceive(int length, DataInputStream in) throws Exception {
+    public void onReceive(int length, DataInputStream in) throws IOException {
         playerName = VarData.readVarString(in, VarData.readVarInt(in));
     }
 }

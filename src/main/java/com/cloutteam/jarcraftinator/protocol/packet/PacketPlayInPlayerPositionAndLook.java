@@ -1,6 +1,7 @@
 package com.cloutteam.jarcraftinator.protocol.packet;
 
 import java.io.DataInputStream;
+import java.io.IOException;
 
 public class PacketPlayInPlayerPositionAndLook extends PacketIn{
 
@@ -36,7 +37,7 @@ public class PacketPlayInPlayerPositionAndLook extends PacketIn{
     }
 
     @Override
-    public void onReceive(int length, DataInputStream in) throws Exception {
+    public void onReceive(int length, DataInputStream in) throws IOException {
         x = in.readDouble();
         y = in.readDouble();
         z = in.readDouble();

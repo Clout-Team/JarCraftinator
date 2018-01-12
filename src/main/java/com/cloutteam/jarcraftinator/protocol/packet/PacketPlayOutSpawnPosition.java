@@ -3,6 +3,7 @@ package com.cloutteam.jarcraftinator.protocol.packet;
 import com.cloutteam.jarcraftinator.utils.VarData;
 
 import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class PacketPlayOutSpawnPosition extends PacketOut {
 
@@ -41,15 +42,11 @@ public class PacketPlayOutSpawnPosition extends PacketOut {
     }
 
     @Override
-    public void send(DataOutputStream out) {
-        try {
-            byte[] packetId = VarData.getVarInt(0x46);
-            VarData.writeVarInt(out, packetId.length + 8);
-            out.write(packetId);
-            VarData.writePosition(out, x, y, z);
-            out.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void send(DataOutputStream out) throws IOException {
+        byte[] packetId = VarData.getVarInt(0x46);
+        VarData.writeVarInt(out, packetId.length + 8);
+        out.write(packetId);
+        VarData.writePosition(out, x, y, z);
+        out.flush();
     }
 }

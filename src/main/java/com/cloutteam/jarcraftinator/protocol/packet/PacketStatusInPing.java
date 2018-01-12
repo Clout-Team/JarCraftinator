@@ -1,6 +1,7 @@
 package com.cloutteam.jarcraftinator.protocol.packet;
 
 import java.io.DataInputStream;
+import java.io.IOException;
 
 public class PacketStatusInPing extends PacketIn {
 
@@ -16,7 +17,7 @@ public class PacketStatusInPing extends PacketIn {
     }
 
     @Override
-    public void onReceive(int length, DataInputStream in) throws Exception {
+    public void onReceive(int length, DataInputStream in) throws IOException {
         this.length = length;
         data = in.readLong();
     }

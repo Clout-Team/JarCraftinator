@@ -5,6 +5,7 @@ import com.cloutteam.jarcraftinator.world.Chunk;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class PacketPlayOutChunkData extends PacketOut {
 
@@ -15,8 +16,7 @@ public class PacketPlayOutChunkData extends PacketOut {
     }
 
     @Override
-    public void send(DataOutputStream out) {
-        try {
+    public void send(DataOutputStream out) throws IOException {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             DataOutputStream chunkStream = new DataOutputStream(byteArrayOutputStream);
             VarData.writeVarInt(chunkStream, 0x20);
@@ -26,9 +26,5 @@ public class PacketPlayOutChunkData extends PacketOut {
             VarData.writeVarInt(out, byteArrayOutputStream.size());
             out.write(byteArrayOutputStream.toByteArray());
             out.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 }

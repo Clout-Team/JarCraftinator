@@ -1,5 +1,6 @@
 package com.cloutteam.jarcraftinator.utils;
 
+import com.cloutteam.jarcraftinator.exceptions.IOWriteException;
 import com.cloutteam.jarcraftinator.world.BlockState;
 import com.cloutteam.jarcraftinator.world.Chunk;
 

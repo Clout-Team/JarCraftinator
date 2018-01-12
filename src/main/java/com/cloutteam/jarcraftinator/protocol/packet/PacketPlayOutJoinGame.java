@@ -7,6 +7,7 @@ import com.cloutteam.jarcraftinator.world.DimensionType;
 import com.cloutteam.jarcraftinator.world.LevelType;
 
 import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class PacketPlayOutJoinGame extends PacketOut {
 
@@ -29,22 +30,18 @@ public class PacketPlayOutJoinGame extends PacketOut {
     }
 
     @Override
-    public void send(DataOutputStream out) {
-        try {
-            byte[] packetId = VarData.getVarInt(0x23);
-            byte[] levelType = VarData.packString(this.levelType.getId());
-            VarData.writeVarInt(out, 12 + levelType.length + packetId.length);
-            out.write(packetId);
-            out.writeInt(entityID);
-            out.writeByte(gamemode.getId());
-            out.writeInt(dimensionType.getId());
-            out.writeByte(difficulty.getId());
-            out.writeByte(maxPlayers);
-            out.write(levelType);
-            out.writeBoolean(reducedDebug);
-            out.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void send(DataOutputStream out) throws IOException {
+        byte[] packetId = VarData.getVarInt(0x23);
+        byte[] levelType = VarData.packString(this.levelType.getId());
+        VarData.writeVarInt(out, 12 + levelType.length + packetId.length);
+        out.write(packetId);
+        out.writeInt(entityID);
+        out.writeByte(gamemode.getId());
+        out.writeInt(dimensionType.getId());
+        out.writeByte(difficulty.getId());
+        out.writeByte(maxPlayers);
+        out.write(levelType);
+        out.writeBoolean(reducedDebug);
+        out.flush();
     }
 }

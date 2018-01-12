@@ -24,14 +24,10 @@ public class PacketStatusOutPong extends PacketOut {
     }
 
     @Override
-    public void send(DataOutputStream out) {
-        try {
-            VarData.writeVarInt(out, length);
-            VarData.writeVarInt(out, 0x01);
-            out.writeLong(data);
-            out.flush();
-        }catch(IOException ex) {
-            ex.printStackTrace();
-        }
+    public void send(DataOutputStream out) throws IOException {
+        VarData.writeVarInt(out, length);
+        VarData.writeVarInt(out, 0x01);
+        out.writeLong(data);
+        out.flush();
     }
 }
