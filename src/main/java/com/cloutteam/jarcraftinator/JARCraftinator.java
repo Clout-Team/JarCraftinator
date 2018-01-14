@@ -27,6 +27,7 @@ public class JARCraftinator {
     private ConfigManager configManager;
     private Logger logger;
     private String version;
+    private ConnectionHandler connectionHandler;
     private TeleportManager teleportManager;
     private PlayerManager playerManager;
     private Timer timer;
@@ -76,7 +77,8 @@ public class JARCraftinator {
         }
 
         logger.log("Starting server...");
-        new ConnectionHandler(configManager.getPort()).start();
+        connectionHandler = new ConnectionHandler(configManager.getPort());
+        connectionHandler.start();
 
         logger.log("Starting scheduler...");
         timer = new Timer();
@@ -127,6 +129,10 @@ public class JARCraftinator {
         new JARCraftinator();
     }
 
+    public static boolean isRunning(){
+        return instance.running;
+    }
+
     public static ConfigManager getConfig() {
         return instance.configManager;
     }
@@ -149,6 +155,10 @@ public class JARCraftinator {
 
     public static Timer getTimer(){
         return instance.timer;
+    }
+
+    public static ConnectionHandler getConnectionHandler(){
+        return instance.connectionHandler;
     }
 
 }

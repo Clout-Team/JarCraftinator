@@ -2,7 +2,9 @@ package com.cloutteam.jarcraftinator.entity.player;
 
 import com.cloutteam.jarcraftinator.JARCraftinator;
 import com.cloutteam.jarcraftinator.api.chat.ChatColor;
+import com.cloutteam.jarcraftinator.api.json.JSONObject;
 import com.cloutteam.jarcraftinator.exceptions.IOWriteException;
+import com.cloutteam.jarcraftinator.handler.ConnectionHandler;
 import com.cloutteam.jarcraftinator.logging.LogLevel;
 import com.cloutteam.jarcraftinator.protocol.ConnectionState;
 import com.cloutteam.jarcraftinator.protocol.MinecraftVersion;
@@ -161,6 +163,37 @@ public class PlayerConnection extends Thread {
                                             ex.getMessage() + ")", LogLevel.DEBUG);
                                 }
                                 break;
+                            case 0x02:
+                                try {
+                                    PacketPlayInChat chatPacket = new PacketPlayInChat();
+                                    chatPacket.onReceive(packetLength, in);
+
+                                    if(!chatPacket.isValid()){
+                                        //TODO: Kick
+                                        JARCraftinator.getLogger().log(player.getName() + " sent a message of length greater than 256 characters. This is not normally possible.", LogLevel.WARNING);
+                                        socket.close();
+                                    }
+
+                                    if(chatPacket.getMessage().startsWith("/")){
+                                        return;
+                                    }
+
+                                    String message = getPlayer().getName() + " > " + chatPacket.getMessage();
+
+                                    JSONObject chatComponent = new JSONObject();
+                                    chatComponent.add("text", message);
+                                    System.out.println(chatComponent.toString());
+                                    PacketPlayOutChat chatOut = new PacketPlayOutChat(chatComponent.toString());
+
+                                    for(PlayerConnection connection :
+                                            JARCraftinator.getConnectionHandler().getAllPlayerConnections()){
+                                        chatOut.send(connection.getOut());
+                                    }
+                                }catch(IOException ex){
+                                    JARCraftinator.getLogger().log("Error whilst receiving message (" +
+                                            ex.getMessage() + ")", LogLevel.DEBUG);
+                                }
+                                break;
                             case 0x04:
                                 try {
                                     PacketPlayInClientSettings clientSettings = new PacketPlayInClientSettings();
@@ -182,6 +215,10 @@ public class PlayerConnection extends Thread {
                                     JARCraftinator.getLogger().log("Error whilst handling client settings packet (" +
                                             ex.getMessage() + ")", LogLevel.DEBUG);
                                 }
+                                break;
+                            case 0x0B:
+                                PacketPlayInKeepAlive packetPlayInKeepAlive = new PacketPlayInKeepAlive();
+                                packetPlayInKeepAlive.onReceive(packetLength, in);
                                 break;
                             case 0x0E:
                                 try {

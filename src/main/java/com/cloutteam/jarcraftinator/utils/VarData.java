@@ -52,8 +52,6 @@ public class VarData {
         return result;
     }
 
-    // Chunk data
-
     public static void writeVarString(DataOutputStream out, String string) throws IOException {
         writeVarInt(out, string.length());
         out.writeUTF(string);
