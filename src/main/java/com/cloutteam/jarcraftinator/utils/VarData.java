@@ -3,6 +3,7 @@ package com.cloutteam.jarcraftinator.utils;
 import com.cloutteam.jarcraftinator.exceptions.IOWriteException;
 import com.cloutteam.jarcraftinator.world.BlockState;
 import com.cloutteam.jarcraftinator.world.Chunk;
+import com.cloutteam.jarcraftinator.world.ChunkSection;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -127,7 +128,7 @@ public class VarData {
         writeVarInt(data, 0);
     }
 
-    private static void writeChunkSection(Chunk.ChunkSection section, DataOutputStream data) throws IOException {
+    private static void writeChunkSection(ChunkSection section, DataOutputStream data) throws IOException {
         byte bitsPerBlock = FULL_SIZE_BITS_PER_BLOCK;  // 13
 
         data.writeByte(bitsPerBlock);
@@ -176,7 +177,7 @@ public class VarData {
             }
         }
 
-        if (section.getWorld().hasSkylight()) { // IE, current dimension is overworld / 0
+        if (section.hasSkylight()) { // IE, current dimension is overworld / 0
             for (int y = 0; y < SECTION_HEIGHT; y++) {
                 for (int z = 0; z < SECTION_WIDTH; z++) {
                     for (int x = 0; x < SECTION_WIDTH; x += 2) {

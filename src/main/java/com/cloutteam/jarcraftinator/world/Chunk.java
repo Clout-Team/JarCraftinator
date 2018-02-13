@@ -26,10 +26,10 @@ public class Chunk {
         //TODO check section array
 
         // For testing proposes only
-        return y != 3;
+        return false;
     }
 
-    public void setSections(ChunkSection[16] chunkSections) {
+    public void setSections(ChunkSection[] chunkSections) {
         this.chunkSections = chunkSections;
     }
 
@@ -46,39 +46,5 @@ public class Chunk {
         return Biome.PLAINS;
     }
 
-    public class ChunkSection {
-        private final int y;
-        private BlockState[][][] blocks = new BlockState[16][16][16];
-
-        public ChunkSection(int y, BlockState[16][16][16] blocks) {
-            this.y = y;
-            this.blocks = blocks;
-        }
-
-        public int getY() {
-            return y;
-        }
-
-        public boolean isEmpty() {
-            return false;
-        }
-
-        public BlockState getState(int x, int y, int z) {
-            return blocks[x][y][z];
-        }
-
-        public int getBlockLight(int x, int y, int z) {
-            return 15;
-        }
-
-        public int getSkyLight(int x, int y, int z) {
-            return 15;
-        }
-
-        public World getWorld() {
-            return world;
-        }
-
-    }
 
 }

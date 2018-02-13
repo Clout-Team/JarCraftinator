@@ -4,7 +4,6 @@ package com.cloutteam.jarcraftinator.world.terrain.noise;
 
 public class PerlinNoise extends Noise {
     public PerlinNoise (int octaves, double scale, double persistence) {
-	    super(octaves, scale, persistence);
             for (int i=0; i < 256 ; i++) p[256+i] = p[i] = permutation[i];
     }
 

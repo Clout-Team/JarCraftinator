@@ -16,6 +16,7 @@ import com.cloutteam.jarcraftinator.world.Difficulty;
 import com.cloutteam.jarcraftinator.world.DimensionType;
 import com.cloutteam.jarcraftinator.world.LevelType;
 import com.cloutteam.jarcraftinator.world.navigation.Teleport;
+import com.cloutteam.jarcraftinator.world.terrain.Terrain;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -205,9 +206,14 @@ public class PlayerConnection extends Thread {
                                     new PacketPlayOutPlayerPositionAndLook(0, 128, 0, 0, 0, (byte) 0, new Teleport(player, null, player.getLocation(), Teleport.TeleportCause.LOGIN).getId()).send(out);
                                     int chunkX = (int) Math.floor(player.getLocation().getX() / 16);
                                     int chunkZ = (int) Math.floor(player.getLocation().getZ() / 16);
+                                    
+                                    //TODO add to world class
+                                    Terrain terrain = new Terrain();
+                                    terrain.generate();
+
                                     for (int x = chunkX - clientSettings.getViewDistance(); x < chunkX + clientSettings.getViewDistance(); x++)
                                         for (int z = chunkZ - clientSettings.getViewDistance(); z < chunkZ + clientSettings.getViewDistance(); z++)
-                                            new PacketPlayOutChunkData(new Chunk(player.getLocation().getWorld(), x, z)).send(out);
+                                            new PacketPlayOutChunkData(terrain.genChunk(x, z)).send(out);
 
                                     // Start the KeepAlive runnable!
                                     new PlayerKeepAlive(this);

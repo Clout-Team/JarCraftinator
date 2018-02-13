@@ -11,7 +11,7 @@ public abstract class Noise {
     public void set (int octaves, double scale, double persistence) {
         this.octaves = octaves;
         this.scale = scale;
-        this.persistenct = persistence;
+        this.persistence = persistence;
     }
 
     public double octavedNoise(int x, int z, int y) {
