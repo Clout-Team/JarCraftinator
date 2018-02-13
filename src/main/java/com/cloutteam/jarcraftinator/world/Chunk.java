@@ -6,6 +6,8 @@ public class Chunk {
     private final int x;
     private final int z;
 
+    private ChunkSection[] chunkSections = new ChunkSection[16];
+
     public Chunk(World world, int x, int z) {
         this.world = world;
         this.x = x;
@@ -27,26 +29,30 @@ public class Chunk {
         return y != 3;
     }
 
+    public void setSections(ChunkSection[16] chunkSections) {
+        this.chunkSections = chunkSections;
+    }
+
     public World getWorld() {
         return world;
     }
 
     public ChunkSection getSection(int y) {
-        return new ChunkSection(y);
+        return chunkSections[y];
     }
 
-    public Biome getBiome(int x, int z){
+    public Biome getBiome(int x, int z) {
         // For testing proposes only
         return Biome.PLAINS;
     }
 
     public class ChunkSection {
         private final int y;
-	private BlockState[][][] data = new BlockState[16][16][16];
+        private BlockState[][][] blocks = new BlockState[16][16][16];
 
-        public ChunkSection(int y) {
+        public ChunkSection(int y, BlockState[16][16][16] blocks) {
             this.y = y;
-            generateDummyData();
+            this.blocks = blocks;
         }
 
         public int getY() {
@@ -57,20 +63,8 @@ public class Chunk {
             return false;
         }
 
-	public void generateDummyData() {
-            Terrain terrain = new Terrain(10, x, z);
-            terrain.generate();
-            for (int x=0; x<16; x++) {
-                    for (int y=0; y<16; y++) {
-                        for (int z=0; z<16; z++) {
-                            data[x][y][z] = terrain.getBlock(x, y, z);
-                        }
-                    }
-            }
-        }
-
         public BlockState getState(int x, int y, int z) {
-	    return data[x][y][z];
+            return blocks[x][y][z];
         }
 
         public int getBlockLight(int x, int y, int z) {
