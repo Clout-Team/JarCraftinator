@@ -4,10 +4,8 @@ import com.cloutteam.jarcraftinator.JARCraftinator;
 import com.cloutteam.jarcraftinator.api.chat.ChatColor;
 import com.cloutteam.jarcraftinator.api.json.JSONObject;
 import com.cloutteam.jarcraftinator.exceptions.IOWriteException;
-import com.cloutteam.jarcraftinator.handler.ConnectionHandler;
 import com.cloutteam.jarcraftinator.logging.LogLevel;
 import com.cloutteam.jarcraftinator.protocol.ConnectionState;
-import com.cloutteam.jarcraftinator.protocol.MinecraftVersion;
 import com.cloutteam.jarcraftinator.protocol.packet.*;
 import com.cloutteam.jarcraftinator.utils.UUIDManager;
 import com.cloutteam.jarcraftinator.utils.VarData;
@@ -45,17 +43,17 @@ public class PlayerConnection extends Thread {
         try {
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
-        }catch(IOException ex){
+        } catch (IOException ex) {
             JARCraftinator.getLogger().log("Unable to initiate two-way contact with " + socket.getInetAddress()
-             + ":" + socket.getPort() + ". (" + ex.getMessage() + ")!", LogLevel.ERROR);
+                    + ":" + socket.getPort() + ". (" + ex.getMessage() + ")!", LogLevel.ERROR);
 
             try {
-                if(!socket.isClosed()) {
+                if (!socket.isClosed()) {
                     socket.close();
                 }
-            }catch(IOException exception){
+            } catch (IOException exception) {
                 JARCraftinator.getLogger().log("Additionally, an error occured whilst trying to close the " +
-                    "connection. (" + exception.getMessage() + ")", LogLevel.ERROR);
+                        "connection. (" + exception.getMessage() + ")", LogLevel.ERROR);
             }
 
             interrupt();
@@ -76,7 +74,7 @@ public class PlayerConnection extends Thread {
                                     PacketHandshakeIn handshake = new PacketHandshakeIn();
                                     handshake.onReceive(packetLength, in);
                                     connectionState = handshake.getNextState() == PacketHandshakeIn.NextState.LOGIN ? ConnectionState.LOGIN : ConnectionState.STATUS;
-                                }catch(IOException | IOWriteException ex){
+                                } catch (IOException | IOWriteException ex) {
                                     JARCraftinator.getLogger().log("Failed to handshake with " +
                                             socket.getInetAddress() + ":" + socket.getPort(), LogLevel.ERROR);
                                     JARCraftinator.getLogger().log(ex.getMessage(), LogLevel.DEBUG);
@@ -106,11 +104,11 @@ public class PlayerConnection extends Thread {
                                 try {
                                     PacketStatusInPing ping = new PacketStatusInPing();
                                     ping.onReceive(packetLength, in);
-                                    new PacketStatusOutPong(ping.getLength(), ping.getData()).send(out);
+                                    new PacketStatusOutPong(ping.getData()).send(out);
                                     socket.close();
-                                }catch(IOException ex){
+                                } catch (IOException ex) {
                                     JARCraftinator.getLogger().log("Error whilst handling server ping (" +
-                                        ex.getMessage() + ")", LogLevel.DEBUG);
+                                            ex.getMessage() + ")", LogLevel.DEBUG);
                                 }
                                 break;
                         }
@@ -124,7 +122,7 @@ public class PlayerConnection extends Thread {
                                     PacketLoginInLoginStart login = new PacketLoginInLoginStart();
                                     login.onReceive(packetLength, in);
                                     username = login.getPlayerName();
-                                }catch(IOException ex){
+                                } catch (IOException ex) {
                                     JARCraftinator.getLogger().log("Error whilst handling player login (" +
                                             ex.getMessage() + ")", LogLevel.DEBUG);
                                     break;
@@ -158,7 +156,7 @@ public class PlayerConnection extends Thread {
                                         JARCraftinator.getLogger().log("Confirmed teleport: " + teleportConfirm.getTeleportID(), LogLevel.DEBUG);
                                     else
                                         JARCraftinator.getLogger().log("Failed to confirm teleport " + teleportConfirm.getTeleportID() + " because it's either already confirmed or it doesn't exist.", LogLevel.DEBUG);
-                                }catch (IOException ex){
+                                } catch (IOException ex) {
                                     JARCraftinator.getLogger().log("Error whilst confirming teleportation (" +
                                             ex.getMessage() + ")", LogLevel.DEBUG);
                                 }
@@ -168,13 +166,13 @@ public class PlayerConnection extends Thread {
                                     PacketPlayInChat chatPacket = new PacketPlayInChat();
                                     chatPacket.onReceive(packetLength, in);
 
-                                    if(!chatPacket.isValid()){
+                                    if (!chatPacket.isValid()) {
                                         //TODO: Kick
                                         JARCraftinator.getLogger().log(player.getName() + " sent a message of length greater than 256 characters. This is not normally possible.", LogLevel.WARNING);
                                         socket.close();
                                     }
 
-                                    if(chatPacket.getMessage().startsWith("/")){
+                                    if (chatPacket.getMessage().startsWith("/")) {
                                         return;
                                     }
 
@@ -185,11 +183,11 @@ public class PlayerConnection extends Thread {
                                     System.out.println(chatComponent.toString());
                                     PacketPlayOutChat chatOut = new PacketPlayOutChat(chatComponent.toString());
 
-                                    for(PlayerConnection connection :
-                                            JARCraftinator.getConnectionHandler().getAllPlayerConnections()){
+                                    for (PlayerConnection connection :
+                                            JARCraftinator.getConnectionHandler().getAllPlayerConnections()) {
                                         chatOut.send(connection.getOut());
                                     }
-                                }catch(IOException ex){
+                                } catch (IOException ex) {
                                     JARCraftinator.getLogger().log("Error whilst receiving message (" +
                                             ex.getMessage() + ")", LogLevel.DEBUG);
                                 }
@@ -211,7 +209,7 @@ public class PlayerConnection extends Thread {
 
                                     // Start the KeepAlive runnable!
                                     new PlayerKeepAlive(this);
-                                }catch(IOException ex){
+                                } catch (IOException ex) {
                                     JARCraftinator.getLogger().log("Error whilst handling client settings packet (" +
                                             ex.getMessage() + ")", LogLevel.DEBUG);
                                 }
@@ -227,9 +225,9 @@ public class PlayerConnection extends Thread {
                                     JARCraftinator.getLogger().log("X: " + packetPlayInPlayerPositionAndLook.getX(), LogLevel.DEBUG);
                                     JARCraftinator.getLogger().log("Y: " + packetPlayInPlayerPositionAndLook.getY(), LogLevel.DEBUG);
                                     JARCraftinator.getLogger().log("Z: " + packetPlayInPlayerPositionAndLook.getZ(), LogLevel.DEBUG);
-                                }catch(IOException ex){
+                                } catch (IOException ex) {
                                     JARCraftinator.getLogger().log("Error whilst handling player move packet (" +
-                                        ex.getMessage() + ")", LogLevel.DEBUG);
+                                            ex.getMessage() + ")", LogLevel.DEBUG);
                                 }
                                 break;
                             default:
@@ -237,7 +235,7 @@ public class PlayerConnection extends Thread {
                                 try {
                                     for (packetLength -= VarData.getVarInt(packetId).length; packetLength > 0; packetLength--)
                                         in.readByte();
-                                }catch(IOException ex){
+                                } catch (IOException ex) {
                                     ex.printStackTrace();
                                 }
 
@@ -247,8 +245,8 @@ public class PlayerConnection extends Thread {
             } catch (EOFException | SocketException e) {
                 JARCraftinator.getLogger().log("Error while receiving packet from " + socket.getInetAddress().toString() + "! Ignoring...", LogLevel.DEBUG);
                 break;
-            } catch (IOException ex){
-                if(socket.isClosed()){
+            } catch (IOException ex) {
+                if (socket.isClosed()) {
                     break;
                 }
             }

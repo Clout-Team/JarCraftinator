@@ -3,9 +3,7 @@ package com.cloutteam.jarcraftinator.protocol.packet;
 import com.cloutteam.jarcraftinator.api.json.JSONObject;
 import com.cloutteam.jarcraftinator.entity.player.Player;
 import com.cloutteam.jarcraftinator.protocol.MinecraftVersion;
-import com.cloutteam.jarcraftinator.utils.VarData;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -146,7 +144,7 @@ public class PacketStatusOutResponse extends PacketOut {
     }
 
     @Override
-    public void send(DataOutputStream out) throws IOException {
+    public void send(PacketSerializer serializer) throws IOException {
         JSONObject response = new JSONObject().add("version", new JSONObject().add("name", this.version.getName()).add("protocol", this.version.getProtocol())).add("players", new JSONObject().add("max", maxPlayers).add("online", onlinePlayers)).add("description", new JSONObject().add("text", motd));
         if (!favicon.isEmpty())
             response.add("favicon", favicon);
@@ -154,12 +152,6 @@ public class PacketStatusOutResponse extends PacketOut {
 
         //TODO sample object inside player
 
-        byte[] packetId = VarData.getVarInt(0x00);
-        byte[] dataLength = VarData.getVarInt(responseText.getBytes().length);
-        VarData.writeVarInt(out, responseText.getBytes().length + packetId.length + dataLength.length);
-        out.write(packetId);
-        out.write(dataLength);
-        out.writeBytes(responseText);
-        out.flush();
+        serializer.withPacketId(0x00).writeString(responseText);
     }
 }

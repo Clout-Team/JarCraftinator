@@ -1,17 +1,12 @@
 package com.cloutteam.jarcraftinator.protocol.packet;
 
-import com.cloutteam.jarcraftinator.utils.VarData;
-
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class PacketStatusOutPong extends PacketOut {
 
-    private int length;
     private long data;
 
-    public PacketStatusOutPong(int length, long data) {
-        this.length = length;
+    public PacketStatusOutPong(long data) {
         this.data = data;
     }
 
@@ -24,10 +19,8 @@ public class PacketStatusOutPong extends PacketOut {
     }
 
     @Override
-    public void send(DataOutputStream out) throws IOException {
-        VarData.writeVarInt(out, length);
-        VarData.writeVarInt(out, 0x01);
-        out.writeLong(data);
-        out.flush();
+    public void send(PacketSerializer serializer) throws IOException {
+        serializer.withPacketId(0x01).writeLong(data);
     }
+
 }

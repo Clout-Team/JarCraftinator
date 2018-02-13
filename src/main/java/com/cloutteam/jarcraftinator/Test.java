@@ -2,47 +2,48 @@ package com.cloutteam.jarcraftinator;
 
 import com.cloutteam.jarcraftinator.world.BlockState;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.Arrays;
 
 public class Test {
 
     public static void main(String[] args) {
-        BlockState dummyState = new BlockState();
+        try {
+            BlockState block = new BlockState();
 
-        List<Long> longList = new ArrayList<>();
-        StringBuilder currentLong = new StringBuilder();
-        for (int y = 0; y < 16; y++)
-            for (int z = 0; z < 16; z++)
-                for (int x = 0; x < 16; x++) {
-                    for (int i = 0; i < 4; i++) {
-                        currentLong.append(getBit(dummyState.getMetadata(), i));
-                        if (currentLong.length() == 64) {
-                            System.out.println(currentLong.toString());
-                            longList.add(parseLong(currentLong.toString()));
-                            currentLong = new StringBuilder();
+            int BITS_PER_BLOCK = 13;
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            long currentLong = 0;
+            int bitsWritten = 0;
+            for (int y = 0; y < 16; y++)
+                for (int z = 0; z < 16; z++)
+                    for (int x = 0; x < 16; x++) {
+                        if (bitsWritten + BITS_PER_BLOCK <= 64) {
+                            currentLong |= (((long) (block.getId() << 4 | block.getMetadata())) << bitsWritten);
+                            bitsWritten += BITS_PER_BLOCK;
+                        } else {
+                            int newLong = BITS_PER_BLOCK - 64 + bitsWritten;
+                            currentLong |= (((long) (block.getId() << 4 | block.getMetadata())) << bitsWritten);
+                            stream.write(ByteBuffer.allocate(Long.BYTES).order(ByteOrder.BIG_ENDIAN).putLong(currentLong).array());
+                            currentLong = 0;
+                            currentLong |= ((long) (block.getId() << 4 | block.getMetadata())) >> BITS_PER_BLOCK - newLong;
+                            bitsWritten = newLong;
+                        }
+                        if (bitsWritten == 64) {
+                            stream.write(ByteBuffer.allocate(Long.BYTES).order(ByteOrder.BIG_ENDIAN).putLong(currentLong).array());
+                            currentLong = 0;
+                            bitsWritten = 0;
                         }
                     }
-                    for (int i = 0; i < 9; i++) {
-                        currentLong.append(getBit(dummyState.getId(), i));
-                        if (currentLong.length() == 64) {
-                            System.out.println(currentLong.toString());
-                            longList.add(parseLong(currentLong.toString()));
-                            currentLong = new StringBuilder();
-                        }
-                    }
-                }
-        System.out.println(longList);
-        System.out.println(longList.size());
-    }
 
-    private static long parseLong(String s) {
-        return new BigInteger(s, 2).longValue();
-    }
-
-    private static int getBit(int n, int k) {
-        return (n >> k) & 1;
+            System.out.println(Arrays.toString(stream.toByteArray()));
+            System.out.println(stream.size());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

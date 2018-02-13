@@ -1,12 +1,10 @@
 package com.cloutteam.jarcraftinator.protocol.packet;
 
 import com.cloutteam.jarcraftinator.entity.player.GameMode;
-import com.cloutteam.jarcraftinator.utils.VarData;
 import com.cloutteam.jarcraftinator.world.Difficulty;
 import com.cloutteam.jarcraftinator.world.DimensionType;
 import com.cloutteam.jarcraftinator.world.LevelType;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class PacketPlayOutJoinGame extends PacketOut {
@@ -30,18 +28,7 @@ public class PacketPlayOutJoinGame extends PacketOut {
     }
 
     @Override
-    public void send(DataOutputStream out) throws IOException {
-        byte[] packetId = VarData.getVarInt(0x23);
-        byte[] levelType = VarData.packString(this.levelType.getId());
-        VarData.writeVarInt(out, 12 + levelType.length + packetId.length);
-        out.write(packetId);
-        out.writeInt(entityID);
-        out.writeByte(gamemode.getId());
-        out.writeInt(dimensionType.getId());
-        out.writeByte(difficulty.getId());
-        out.writeByte(maxPlayers);
-        out.write(levelType);
-        out.writeBoolean(reducedDebug);
-        out.flush();
+    public void send(PacketSerializer serializer) throws IOException {
+        serializer.withPacketId(0x23).writeInt(entityID).writeBytes((byte) gamemode.getId()).writeInt(dimensionType.getId()).writeBytes((byte) difficulty.getId()).writeBytes((byte) maxPlayers).writeString(this.levelType.getId()).writeBoolean(reducedDebug);
     }
 }
