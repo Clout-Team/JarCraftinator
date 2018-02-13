@@ -1,15 +1,19 @@
 package com.cloutteam.jarcraftinator.world;
 
 public class BlockState {
+    private final int id;
+    private final int meta;
+
+    public BlockState(int blockId, int blockMeta) {
+	this.id = blockId;
+	this.meta = blockMeta;
+    }
 
     public int getId() {
-        // For testing proposes
-        return 1;
+	return id;
     }
 
     public int getMetadata() {
-        // For testing proposes
-        return 1;
+	return meta;
     }
-
 }

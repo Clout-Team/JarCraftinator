@@ -9,7 +9,7 @@ import java.util.List;
 public class Test {
 
     public static void main(String[] args) {
-        BlockState dummyState = new BlockState();
+        BlockState dummyState = new BlockState(1, 1);
 
         List<Long> longList = new ArrayList<>();
         StringBuilder currentLong = new StringBuilder();

@@ -32,7 +32,6 @@ public class Chunk {
     }
 
     public ChunkSection getSection(int y) {
-        // Return dummy section
         return new ChunkSection(y);
     }
 
@@ -43,30 +42,35 @@ public class Chunk {
 
     public class ChunkSection {
         private final int y;
+	private BlockState[][][] data = new BlockState[16][16][16];
 
         public ChunkSection(int y) {
             this.y = y;
-        }
-
-        public int getX() {
-            return x;
+            generateDummyData();
         }
 
         public int getY() {
             return y;
         }
 
-        public int getZ() {
-            return z;
-        }
-
         public boolean isEmpty() {
             return false;
         }
 
+	public void generateDummyData() {
+            Terrain t = new Terrain(10);
+            t.generate();
+            for (int x=0; x<16; x++) {
+                    for (int y=0; y<16; y++) {
+                        for (int z=0; z<16; z++) {
+                            data[x][y][z] = t.getBlock(x, y, z);
+                        }
+                    }
+            }
+        }
+
         public BlockState getState(int x, int y, int z) {
-            // For testing proposes
-            return new BlockState();
+	    return data[x][y][z];
         }
 
         public int getBlockLight(int x, int y, int z) {
