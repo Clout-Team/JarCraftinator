@@ -58,12 +58,12 @@ public class Chunk {
         }
 
 	public void generateDummyData() {
-            Terrain t = new Terrain(10);
-            t.generate();
+            Terrain terrain = new Terrain(10, x, z);
+            terrain.generate();
             for (int x=0; x<16; x++) {
                     for (int y=0; y<16; y++) {
                         for (int z=0; z<16; z++) {
-                            data[x][y][z] = t.getBlock(x, y, z);
+                            data[x][y][z] = terrain.getBlock(x, y, z);
                         }
                     }
             }
