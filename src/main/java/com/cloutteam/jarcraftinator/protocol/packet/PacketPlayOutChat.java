@@ -5,10 +5,11 @@ import com.cloutteam.jarcraftinator.utils.VarData;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class PacketPlayOutChat extends PacketOut {
 
-    private String chatComponent;
+    private final String chatComponent;
 
     public PacketPlayOutChat(String chatComponent){
         this.chatComponent = chatComponent;
@@ -16,29 +17,29 @@ public class PacketPlayOutChat extends PacketOut {
 
     @Override
     public void send(DataOutputStream out) throws IOException {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
 
         byte[] packetId = VarData.getVarInt(0x0F);
 
-        // Begin packet data
-        VarData.writeVarString(dataOutputStream, chatComponent);
-        dataOutputStream.writeByte(0x00); // 0 = chat box
-        // End packet data
+        // Prepare packet data
+        ByteArrayOutputStream packetData = new ByteArrayOutputStream();
+        DataOutputStream packetDataWriter = new DataOutputStream(packetData);
 
-        // Flush packet data
-        dataOutputStream.flush();
-        dataOutputStream.close();
-        byteArrayOutputStream.flush();
+        VarData.writeVarString(packetDataWriter, chatComponent);
+        packetDataWriter.writeByte(0x00);
 
-        // Send the entire packet to the client
-        VarData.writeVarInt(out, packetId.length + dataOutputStream.size());
+        packetDataWriter.close();
+        packetData.close();
+        byte[] packetBytes = packetData.toByteArray();
+
+        // Get packet length
+        int packetLength = packetId.length + packetBytes.length;
+
+        // Write the packet length, ID and data.
+        VarData.writeVarInt(out, packetLength);
         out.write(packetId);
-        out.write(byteArrayOutputStream.toByteArray());
+        out.write(packetData.toByteArray());
         out.flush();
 
-        // Close our temporary streams
-        byteArrayOutputStream.close();
     }
 
 }

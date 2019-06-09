@@ -53,8 +53,8 @@ public class VarData {
     }
 
     public static void writeVarString(DataOutputStream out, String string) throws IOException {
-        writeVarInt(out, string.length());
-        out.writeUTF(string);
+        out.write(getVarInt(string.length()));
+        out.write(string.getBytes());
     }
 
     public static void writePosition(DataOutputStream out, int x, int y, int z) throws IOException {

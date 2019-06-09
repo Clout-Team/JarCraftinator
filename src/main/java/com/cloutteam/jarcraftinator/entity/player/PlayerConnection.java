@@ -182,12 +182,11 @@ public class PlayerConnection extends Thread {
 
                                     JSONObject chatComponent = new JSONObject();
                                     chatComponent.add("text", message);
-                                    System.out.println(chatComponent.toString());
-                                    PacketPlayOutChat chatOut = new PacketPlayOutChat(chatComponent.toString());
+                                    PacketPlayOutChat packetPlayOutChat = new PacketPlayOutChat(chatComponent.toString());
 
                                     for(PlayerConnection connection :
                                             JARCraftinator.getConnectionHandler().getAllPlayerConnections()){
-                                        chatOut.send(connection.getOut());
+                                        packetPlayOutChat.send(connection.getOut());
                                     }
                                 }catch(IOException ex){
                                     JARCraftinator.getLogger().log("Error whilst receiving message (" +
