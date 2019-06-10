@@ -5,27 +5,28 @@ import com.cloutteam.jarcraftinator.utils.VarData;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class PacketPlayOutChat extends PacketOut {
 
+    private final PacketPlayOutChatPosition position;
     private final String chatComponent;
 
-    public PacketPlayOutChat(String chatComponent){
+    public PacketPlayOutChat(String chatComponent, PacketPlayOutChatPosition position){
+        this.position = position;
         this.chatComponent = chatComponent;
     }
 
     @Override
     public void send(DataOutputStream out) throws IOException {
 
-        byte[] packetId = VarData.getVarInt(0x0F);
+        byte[] packetId = VarData.getVarInt(MinecraftPacket.PLAY.CHAT.out);
 
         // Prepare packet data
         ByteArrayOutputStream packetData = new ByteArrayOutputStream();
         DataOutputStream packetDataWriter = new DataOutputStream(packetData);
 
         VarData.writeVarString(packetDataWriter, chatComponent);
-        packetDataWriter.writeByte(0x00);
+        packetDataWriter.writeByte(position.getId());
 
         packetDataWriter.close();
         packetData.close();
@@ -40,6 +41,23 @@ public class PacketPlayOutChat extends PacketOut {
         out.write(packetData.toByteArray());
         out.flush();
 
+    }
+
+    public enum PacketPlayOutChatPosition {
+
+        CHAT_BOX(0x00),
+        SYSTEM_MESSAGE(0x01),
+        HOTBAR(0x02);
+
+        private final byte id;
+
+        PacketPlayOutChatPosition(int id){
+            this.id = (byte) id;
+        }
+
+        public byte getId() {
+            return id;
+        }
     }
 
 }

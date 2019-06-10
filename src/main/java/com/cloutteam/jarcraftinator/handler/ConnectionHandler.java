@@ -39,4 +39,10 @@ public class ConnectionHandler extends Thread {
     public List<PlayerConnection> getAllPlayerConnections() {
         return connectionList;
     }
+
+    public void closeConnection(PlayerConnection connection){
+        connection.interrupt();
+        connectionList.remove(connection);
+    }
+
 }

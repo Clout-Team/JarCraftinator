@@ -10,6 +10,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,20 +46,20 @@ public class VarData {
     }
 
     public static String readVarString(DataInputStream in, int size) throws IOException {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for (int i = 0; i < size; i++) {
-            result += (char) in.readByte();
+            result.append((char) in.readByte());
         }
-        return result;
+        return result.toString();
     }
 
     public static void writeVarString(DataOutputStream out, String string) throws IOException {
         out.write(getVarInt(string.length()));
-        out.write(string.getBytes());
+        out.write(string.getBytes(StandardCharsets.UTF_8));
     }
 
     public static void writePosition(DataOutputStream out, int x, int y, int z) throws IOException {
-        out.writeLong(((x & 0x3FFFFFF) << 38) | ((y & 0xFFF) << 26) | (z & 0x3FFFFFF));
+        out.writeLong(((x & 0x3FFFFFF) << 6) | ((y & 0xFFF) << 26) | (z & 0x3FFFFFF));
     }
 
     public static byte[] getVarInt(int paramInt) throws IOException {
@@ -74,16 +75,16 @@ public class VarData {
         }
     }
 
-    public static byte[] getInt(int paramInt) throws IOException {
+    public static byte[] getInt(int paramInt) {
         return ByteBuffer.allocate(Integer.SIZE / 8).putInt(paramInt).array();
     }
 
-    public static byte[] getLong(long paramLong) throws IOException {
+    public static byte[] getLong(long paramLong) {
         return ByteBuffer.allocate(Long.SIZE / 8).putLong(paramLong).array();
     }
 
     public static byte[] packString(String string) throws IOException {
-        byte[] str = string.getBytes("UTF-8");
+        byte[] str = string.getBytes(StandardCharsets.UTF_8);
         byte[] len = getVarInt(str.length);
 
         ByteArrayOutputStream result = new ByteArrayOutputStream();
@@ -128,9 +129,7 @@ public class VarData {
     }
 
     private static void writeChunkSection(Chunk.ChunkSection section, DataOutputStream data) throws IOException {
-        byte bitsPerBlock = FULL_SIZE_BITS_PER_BLOCK;  // 13
-
-        data.writeByte(bitsPerBlock);
+        data.writeByte(FULL_SIZE_BITS_PER_BLOCK);
 
         writeVarInt(data, 0);  // Palette size is 0
 
@@ -139,7 +138,7 @@ public class VarData {
 
         List<Long> blockData = new ArrayList<>();
         StringBuilder currentLong = new StringBuilder();
-        BlockState currentState = null;
+        BlockState currentState;
         for (int y = 0; y < SECTION_HEIGHT; y++) {
             for (int z = 0; z < SECTION_WIDTH; z++) {
                 for (int x = 0; x < SECTION_WIDTH; x++) {

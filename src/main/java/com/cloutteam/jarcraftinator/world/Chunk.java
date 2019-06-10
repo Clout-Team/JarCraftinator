@@ -24,7 +24,7 @@ public class Chunk {
         //TODO check section array
 
         // For testing proposes only
-        return y != 3;
+        return y != 6;
     }
 
     public World getWorld() {

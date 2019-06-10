@@ -26,7 +26,7 @@ public class PacketStatusOutPong extends PacketOut {
     @Override
     public void send(DataOutputStream out) throws IOException {
         VarData.writeVarInt(out, length);
-        VarData.writeVarInt(out, 0x01);
+        VarData.writeVarInt(out, MinecraftPacket.STATUS.PONG);
         out.writeLong(data);
         out.flush();
     }

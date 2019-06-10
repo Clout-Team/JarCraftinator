@@ -4,10 +4,8 @@ import com.cloutteam.jarcraftinator.JARCraftinator;
 import com.cloutteam.jarcraftinator.api.chat.ChatColor;
 import com.cloutteam.jarcraftinator.api.json.JSONObject;
 import com.cloutteam.jarcraftinator.exceptions.IOWriteException;
-import com.cloutteam.jarcraftinator.handler.ConnectionHandler;
 import com.cloutteam.jarcraftinator.logging.LogLevel;
 import com.cloutteam.jarcraftinator.protocol.ConnectionState;
-import com.cloutteam.jarcraftinator.protocol.MinecraftVersion;
 import com.cloutteam.jarcraftinator.protocol.packet.*;
 import com.cloutteam.jarcraftinator.utils.UUIDManager;
 import com.cloutteam.jarcraftinator.utils.VarData;
@@ -15,6 +13,7 @@ import com.cloutteam.jarcraftinator.world.Chunk;
 import com.cloutteam.jarcraftinator.world.Difficulty;
 import com.cloutteam.jarcraftinator.world.DimensionType;
 import com.cloutteam.jarcraftinator.world.LevelType;
+import com.cloutteam.jarcraftinator.world.navigation.Location;
 import com.cloutteam.jarcraftinator.world.navigation.Teleport;
 
 import java.io.DataInputStream;
@@ -70,7 +69,7 @@ public class PlayerConnection extends Thread {
                 switch (connectionState) {
                     case HANDSHAKE:
                         switch (packetId) {
-                            case 0x00:
+                            case MinecraftPacket.HANDSHAKE.modern:
                                 try {
                                     // Receive the handshake and set the next status
                                     PacketHandshakeIn handshake = new PacketHandshakeIn();
@@ -82,7 +81,7 @@ public class PlayerConnection extends Thread {
                                     JARCraftinator.getLogger().log(ex.getMessage(), LogLevel.DEBUG);
                                 }
                                 break;
-                            case 0xFE:
+                            case MinecraftPacket.HANDSHAKE.legacy:
                                 // TODO legacy ping
                                 break;
                         }
@@ -117,7 +116,7 @@ public class PlayerConnection extends Thread {
                         break;
                     case LOGIN:
                         switch (packetId) {
-                            case 0x00:
+                            case MinecraftPacket.LOGIN.LOGIN_START.in:
                                 String username;
 
                                 try {
@@ -137,9 +136,13 @@ public class PlayerConnection extends Thread {
                                 JARCraftinator.getPlayerManager().addOnline(player);
                                 new PacketLoginOutLoginSuccess(uuid, username).send(out);
                                 connectionState = ConnectionState.PLAY;
-                                new PacketPlayOutJoinGame(player.getEntityId(), GameMode.CREATIVE, DimensionType.OVERWORLD, Difficulty.PEACEFUL, 10, LevelType.DEFAULT, false).send(out);
-                                PacketPlayOutSpawnPosition spawnPacket = new PacketPlayOutSpawnPosition(0, 64, 0);
+                                PacketPlayOutSpawnPosition spawnPacket = new PacketPlayOutSpawnPosition(
+                                        (int) Math.round(player.getLocation().getX()),
+                                        (int) Math.round(player.getLocation().getY()),
+                                        (int) Math.round(player.getLocation().getZ())
+                                );
                                 spawnPacket.send(out);
+                                new PacketPlayOutJoinGame(player.getEntityId(), GameMode.CREATIVE, DimensionType.OVERWORLD, Difficulty.PEACEFUL, 10, LevelType.DEFAULT, false).send(out);
                                 JARCraftinator.getLogger().log("Player " + username + " has logged in from " + socket.getInetAddress() + ":" + socket.getPort() + " with UUID " + uuid.toString() + ".");
                                 JARCraftinator.getLogger().log(username + " has spawned on the server at (" + spawnPacket.getX() + ", " + spawnPacket.getY() + ", " + spawnPacket.getZ() + ").");
                                 break;
@@ -150,7 +153,7 @@ public class PlayerConnection extends Thread {
                         break;
                     case PLAY:
                         switch (packetId) {
-                            case 0x00:
+                            case MinecraftPacket.PLAY.TELEPORT_CONFIRM.in:
                                 try {
                                     PacketPlayInTeleportConfirm teleportConfirm = new PacketPlayInTeleportConfirm();
                                     teleportConfirm.onReceive(packetLength, in);
@@ -163,7 +166,7 @@ public class PlayerConnection extends Thread {
                                             ex.getMessage() + ")", LogLevel.DEBUG);
                                 }
                                 break;
-                            case 0x02:
+                            case MinecraftPacket.PLAY.CHAT.in:
                                 try {
                                     PacketPlayInChat chatPacket = new PacketPlayInChat();
                                     chatPacket.onReceive(packetLength, in);
@@ -174,15 +177,24 @@ public class PlayerConnection extends Thread {
                                         socket.close();
                                     }
 
+                                    // Handle command
                                     if(chatPacket.getMessage().startsWith("/")){
+                                        String response = ChatColor.translateAlternateColorCodes("&c&o&lThis command was not found.");
+                                        JSONObject chatComponent = new JSONObject();
+                                        chatComponent.add("text", response);
+                                        PacketPlayOutChat packetPlayOutChat = new PacketPlayOutChat(chatComponent.toString(), PacketPlayOutChat.PacketPlayOutChatPosition.SYSTEM_MESSAGE);
+                                        packetPlayOutChat.send(out);
                                         return;
                                     }
 
-                                    String message = getPlayer().getName() + " > " + chatPacket.getMessage();
+                                    JARCraftinator.getLogger().log(
+                                            "[" + getPlayer().getName() + "] " + chatPacket.getMessage(),
+                                            LogLevel.CHAT
+                                    );
 
                                     JSONObject chatComponent = new JSONObject();
-                                    chatComponent.add("text", message);
-                                    PacketPlayOutChat packetPlayOutChat = new PacketPlayOutChat(chatComponent.toString());
+                                    chatComponent.add("text", getPlayer().getName() + " > " + chatPacket.getMessage());
+                                    PacketPlayOutChat packetPlayOutChat = new PacketPlayOutChat(chatComponent.toString(), PacketPlayOutChat.PacketPlayOutChatPosition.CHAT_BOX);
 
                                     for(PlayerConnection connection :
                                             JARCraftinator.getConnectionHandler().getAllPlayerConnections()){
@@ -193,7 +205,7 @@ public class PlayerConnection extends Thread {
                                             ex.getMessage() + ")", LogLevel.DEBUG);
                                 }
                                 break;
-                            case 0x04:
+                            case MinecraftPacket.PLAY.CLIENT_SETTINGS.in:
                                 try {
                                     PacketPlayInClientSettings clientSettings = new PacketPlayInClientSettings();
                                     clientSettings.onReceive(packetLength, in);
@@ -201,7 +213,21 @@ public class PlayerConnection extends Thread {
                                         break;
                                     loggedIn = true;
                                     JARCraftinator.getLogger().log("Player's locale: " + clientSettings.getLocale(), LogLevel.DEBUG);
-                                    new PacketPlayOutPlayerPositionAndLook(0, 128, 0, 0, 0, (byte) 0, new Teleport(player, null, player.getLocation(), Teleport.TeleportCause.LOGIN).getId()).send(out);
+                                    new PacketPlayOutPlayerPositionAndLook(
+                                            player.getLocation().getX(),
+                                            player.getLocation().getY(),
+                                            player.getLocation().getZ(),
+                                            player.getLocation().getYaw(),
+                                            player.getLocation().getPitch(),
+                                            (byte) 0, // flags
+                                            new Teleport(
+                                                    player,
+                                                    null,
+                                                    player.getLocation(),
+                                                    Teleport.TeleportCause.LOGIN
+                                            ).getId()
+                                    ).send(out);
+
                                     int chunkX = (int) Math.floor(player.getLocation().getX() / 16);
                                     int chunkZ = (int) Math.floor(player.getLocation().getZ() / 16);
                                     for (int x = chunkX - clientSettings.getViewDistance(); x < chunkX + clientSettings.getViewDistance(); x++)
@@ -215,24 +241,31 @@ public class PlayerConnection extends Thread {
                                             ex.getMessage() + ")", LogLevel.DEBUG);
                                 }
                                 break;
-                            case 0x0B:
+                            case MinecraftPacket.PLAY.KEEP_ALIVE.in:
                                 PacketPlayInKeepAlive packetPlayInKeepAlive = new PacketPlayInKeepAlive();
                                 packetPlayInKeepAlive.onReceive(packetLength, in);
                                 break;
-                            case 0x0E:
+                            case MinecraftPacket.PLAY.PLAYER_POSITION_AND_LOOK.in:
                                 try {
                                     PacketPlayInPlayerPositionAndLook packetPlayInPlayerPositionAndLook = new PacketPlayInPlayerPositionAndLook();
                                     packetPlayInPlayerPositionAndLook.onReceive(packetLength, in);
-                                    JARCraftinator.getLogger().log("X: " + packetPlayInPlayerPositionAndLook.getX(), LogLevel.DEBUG);
-                                    JARCraftinator.getLogger().log("Y: " + packetPlayInPlayerPositionAndLook.getY(), LogLevel.DEBUG);
-                                    JARCraftinator.getLogger().log("Z: " + packetPlayInPlayerPositionAndLook.getZ(), LogLevel.DEBUG);
+
+                                    player.updateLocation(new Location(
+                                            player.getWorld(),
+                                            packetPlayInPlayerPositionAndLook.getX(),
+                                            packetPlayInPlayerPositionAndLook.getY(),
+                                            packetPlayInPlayerPositionAndLook.getZ(),
+                                            packetPlayInPlayerPositionAndLook.getYaw(),
+                                            packetPlayInPlayerPositionAndLook.getPitch()
+                                    ));
                                 }catch(IOException ex){
                                     JARCraftinator.getLogger().log("Error whilst handling player move packet (" +
                                         ex.getMessage() + ")", LogLevel.DEBUG);
                                 }
                                 break;
                             default:
-                                // JARCraftinator.getLogger().log("Unknown packet ID: " + Integer.toHexString(packetId), LogLevel.DEBUG);
+                                //JARCraftinator.getLogger().log("Unknown packet ID: " + Integer.toHexString(packetId), LogLevel.DEBUG);
+
                                 try {
                                     for (packetLength -= VarData.getVarInt(packetId).length; packetLength > 0; packetLength--)
                                         in.readByte();
@@ -258,7 +291,7 @@ public class PlayerConnection extends Thread {
             loggedIn = false;
         }
 
-        interrupt();
+        close();
     }
 
     public ConnectionState getConnectionState() {
@@ -280,4 +313,9 @@ public class PlayerConnection extends Thread {
     boolean isLoggedIn() {
         return loggedIn;
     }
+
+    public void close(){
+        JARCraftinator.getConnectionHandler().closeConnection(this);
+    }
+
 }

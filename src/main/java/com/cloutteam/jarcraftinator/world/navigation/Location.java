@@ -6,9 +6,9 @@ import com.cloutteam.jarcraftinator.world.World;
 public class Location {
 
     private World world;
-    private double x = 0;
-    private double y = 0;
-    private double z = 0;
+    private double x;
+    private double y;
+    private double z;
     private float yaw = 0;
     private float pitch = 0;
 

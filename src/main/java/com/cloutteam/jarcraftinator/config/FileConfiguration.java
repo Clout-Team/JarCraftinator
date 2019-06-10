@@ -104,7 +104,11 @@ public class FileConfiguration {
      * @return The value of the path
      */
     public String getString(String path, String def) {
-        return (String) resolvePath(path, def);
+        try {
+            return (String) resolvePath(path, def);
+        }catch(NullPointerException ex){
+            return def;
+        }
     }
 
     /**
@@ -128,21 +132,11 @@ public class FileConfiguration {
     }
 
     public boolean getBoolean(String path) {
-        switch (getString(path, null)) {
-            case "true":
-                return true;
-            default:
-                return false;
-        }
+        return getBoolean(path, false);
     }
 
     public boolean getBoolean(String path, boolean def) {
-        switch (getString(path, Boolean.toString(def))) {
-            case "true":
-                return true;
-            default:
-                return false;
-        }
+        return (getString(path, Boolean.toString(def))).equalsIgnoreCase("true");
     }
 
     /**
@@ -189,7 +183,7 @@ public class FileConfiguration {
                 m = (Map) map.get(segment);
             }
 
-            if (m != null) {
+            if (m != null && m.get(segments[segments.length - 1]) != null) {
                 return m.get(segments[segments.length - 1]);
             } else {
                 return def;

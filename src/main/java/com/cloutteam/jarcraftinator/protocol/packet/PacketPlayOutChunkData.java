@@ -19,7 +19,7 @@ public class PacketPlayOutChunkData extends PacketOut {
     public void send(DataOutputStream out) throws IOException {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             DataOutputStream chunkStream = new DataOutputStream(byteArrayOutputStream);
-            VarData.writeVarInt(chunkStream, 0x20);
+            VarData.writeVarInt(chunkStream, MinecraftPacket.PLAY.CHUNK_DATA.out);
             VarData.writeChunkDataPacket(chunk, chunkStream);
 
             // Send actual packet

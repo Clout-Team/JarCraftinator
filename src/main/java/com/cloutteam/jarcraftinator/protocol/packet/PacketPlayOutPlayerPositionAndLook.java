@@ -94,7 +94,7 @@ public class PacketPlayOutPlayerPositionAndLook extends PacketOut {
 
     @Override
     public void send(DataOutputStream out) throws IOException {
-        byte[] packetId = VarData.getVarInt(0x2F);
+        byte[] packetId = VarData.getVarInt(MinecraftPacket.PLAY.PLAYER_POSITION_AND_LOOK.out);
         byte[] teleportID = VarData.getVarInt(this.teleportID);
         VarData.writeVarInt(out, packetId.length + teleportID.length + 33);
         out.write(packetId);

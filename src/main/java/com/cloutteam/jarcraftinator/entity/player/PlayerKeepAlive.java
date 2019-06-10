@@ -21,16 +21,19 @@ class PlayerKeepAlive extends TimerTask {
     public void run(){
         try {
             // Obviously we don't want to bother
-            // sending KeepAlive packets to a connected client.
-            if (!connection.isLoggedIn()) {
+            // sending KeepAlive packets to a disconnected client.
+            if (connection.isInterrupted() || !connection.isLoggedIn()) {
                 cancel();
+                return;
             }
 
             new PacketPlayOutKeepAlive().send(connection.getOut());
         }catch(IOException ex){
-            JARCraftinator.getLogger().log("Error sending PacketPlayOutKeepAlive to "
-                    + connection.getPlayer().getName() + " (" + ex.getMessage() + ")", LogLevel.DEBUG);
+            // Failed to send PacketPlayOutKeepAlive.
+            JARCraftinator.getLogger().log("Failed to send keep-alive packet to "
+                    + connection.getPlayer().getName() + " (" + ex.getMessage() + ").", LogLevel.ERROR);
             cancel();
+            connection.close();
         }
     }
 
