@@ -8,8 +8,9 @@ These are roughly in the order in which we will work on the code base, although 
 :heavy_check_mark: = Completed | :hourglass_flowing_sand: = In Development
 
 - ~~Server favicon, color MOTD~~ :heavy_check_mark:
+- ~~Keepalive~~ :heavy_check_mark:
 - Packet API :hourglass_flowing_sand:
-- Keepalive
+- Plugin API :hourglass_flowing_sand:
 - World generation
 - World saves
 - Packet encryption
@@ -21,7 +22,6 @@ These are roughly in the order in which we will work on the code base, although 
   - Entities
   - Pathfinding & Pathfinding API
 - Multiple Worlds
-- Plugin API (we may begin implementing this earlier)
 
 ### Development Goals
 - Protocol API that will not break on updates
