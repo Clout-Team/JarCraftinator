@@ -58,7 +58,7 @@ public class ConfigManager {
         return favicon;
     }
 
-    public boolean isLogChatMessages() {
+    public boolean shouldLogChatMessages() {
         return logChatMessages;
     }
 

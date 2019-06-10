@@ -26,7 +26,7 @@ public class PluginLogger implements Logger {
 
     @Override
     public void log(String message, LogLevel level) {
-        log(message, LogLevel.INFO, false);
+        log(message, level, false);
     }
 
     @Override

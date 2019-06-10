@@ -58,7 +58,7 @@ public class JARCraftinator {
         System.out.println();
         System.out.println("Loading logger...");
         logger = new JARCraftinatorLogger();
-        logger.log("JARCraftinatorLogger ready!");
+        logger.log("Logger ready!");
         System.out.println();
         logger.log("Loading settings...");
         try {
@@ -112,7 +112,7 @@ public class JARCraftinator {
 
             switch(command){
                 case "say":
-                    if(args.length < 1) logger.log("You must enter a message to say.", LogLevel.ERROR);
+                    if(args.length < 1) logger.log("You must enter a message to say.", LogLevel.ERROR, true);
                     String message = String.join(" ", args);
 
                     JSONObject chatComponent = new JSONObject();
@@ -135,6 +135,9 @@ public class JARCraftinator {
                             break;
                         }
                     }
+
+                    logger.log("[Console] " + message, LogLevel.CHAT, true);
+
                     break;
 
                 case "reload":

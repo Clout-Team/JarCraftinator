@@ -56,15 +56,13 @@ public class JARCraftinatorLogger implements Logger {
     }
 
     @Override
-    public void log(String message, LogLevel level) { log(message, LogLevel.INFO, false); }
+    public void log(String message, LogLevel level) { log(message, level, false); }
 
     @Override
     public void log(String message, LogLevel level, boolean alwaysShow){
-        if(JARCraftinator.getConfig() != null &&
-                !(JARCraftinator.getConfig().isLogChatMessages())
-                && level == LogLevel.CHAT) return;
+        if(level == LogLevel.CHAT && !(JARCraftinator.getConfig().shouldLogChatMessages())) return;
 
-        String timestamp = "[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "]";
+        String timestamp = "[" + new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format(new Date()) + "]";
         String prefix = " [" + level.toString() + "] ";
 
         try {

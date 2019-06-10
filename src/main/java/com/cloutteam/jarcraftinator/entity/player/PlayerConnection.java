@@ -184,7 +184,7 @@ public class PlayerConnection extends Thread {
                                         chatComponent.add("text", response);
                                         PacketPlayOutChat packetPlayOutChat = new PacketPlayOutChat(chatComponent.toString(), PacketPlayOutChat.PacketPlayOutChatPosition.SYSTEM_MESSAGE);
                                         packetPlayOutChat.send(out);
-                                        return;
+                                        break;
                                     }
 
                                     JARCraftinator.getLogger().log(
