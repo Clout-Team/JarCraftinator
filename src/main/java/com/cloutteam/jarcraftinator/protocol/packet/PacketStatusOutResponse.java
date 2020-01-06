@@ -154,7 +154,7 @@ public class PacketStatusOutResponse extends PacketOut {
 
         //TODO sample object inside player
 
-        byte[] packetId = VarData.getVarInt(0x00);
+        byte[] packetId = VarData.getVarInt(MinecraftPacket.STATUS.RESPONSE);
         byte[] dataLength = VarData.getVarInt(responseText.getBytes().length);
         VarData.writeVarInt(out, responseText.getBytes().length + packetId.length + dataLength.length);
         out.write(packetId);

@@ -20,7 +20,7 @@ public class PacketLoginOutLoginSuccess extends PacketOut{
 
     @Override
     public void send(DataOutputStream out) throws IOException {
-        byte[] packetId = VarData.getVarInt(0x02);
+        byte[] packetId = VarData.getVarInt(MinecraftPacket.LOGIN.LOGIN_SUCCESS.out);
         byte[] uuid = VarData.packString(this.uuid.toString());
         byte[] username = VarData.packString(this.username);
 

@@ -1,13 +1,17 @@
 package com.cloutteam.jarcraftinator;
 
+import com.cloutteam.jarcraftinator.api.json.JSONObject;
 import com.cloutteam.jarcraftinator.config.FileConfiguration;
+import com.cloutteam.jarcraftinator.entity.player.PlayerConnection;
 import com.cloutteam.jarcraftinator.handler.ConnectionHandler;
+import com.cloutteam.jarcraftinator.logging.JARCraftinatorLogger;
 import com.cloutteam.jarcraftinator.logging.LogLevel;
-import com.cloutteam.jarcraftinator.logging.Logger;
 import com.cloutteam.jarcraftinator.manager.ConfigManager;
 import com.cloutteam.jarcraftinator.manager.PlayerManager;
 import com.cloutteam.jarcraftinator.manager.TeleportManager;
+import com.cloutteam.jarcraftinator.plugin.PluginManager;
 import com.cloutteam.jarcraftinator.protocol.MinecraftVersion;
+import com.cloutteam.jarcraftinator.protocol.packet.PacketPlayOutChat;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,11 +29,12 @@ public class JARCraftinator {
     private boolean running = true;
     private FileConfiguration config;
     private ConfigManager configManager;
-    private Logger logger;
+    private JARCraftinatorLogger logger;
     private String version;
     private ConnectionHandler connectionHandler;
     private TeleportManager teleportManager;
     private PlayerManager playerManager;
+    private PluginManager pluginManager;
     private Timer timer;
 
     private JARCraftinator() {
@@ -52,7 +57,7 @@ public class JARCraftinator {
         System.out.println("https://wwww.clout-team.com/");
         System.out.println();
         System.out.println("Loading logger...");
-        logger = new Logger();
+        logger = new JARCraftinatorLogger();
         logger.log("Logger ready!");
         System.out.println();
         logger.log("Loading settings...");
@@ -89,38 +94,82 @@ public class JARCraftinator {
         logger.log("Loading player manager...");
         playerManager = new PlayerManager();
 
+        logger.log("Loading plugin manager...");
+        pluginManager = new PluginManager();
+
         // Now start the CLI
         Scanner scanner = new Scanner(System.in);
         logger.log("Server ready and online!");
         while (running) {
-            String command = scanner.nextLine();
+            String inputln = scanner.nextLine();
+            String[] input = inputln.split(" ");
 
-            if (command.equalsIgnoreCase("stop")) {
-                // End the timer
-                logger.log("Closing scheduler...");
-                timer.cancel();
+            if(input.length < 1) continue;
+            String command = input[0];
 
-                // Stop the server
-                logger.log("Stopping server...");
-                running = false;
+            String[] args = new String[input.length - 1];
+            if(input.length > 1) System.arraycopy(input, 1, args, 0, input.length - 1);
 
-                // Close the ANSI console
-                logger.destroy();
+            switch(command){
+                case "say":
+                    if(args.length < 1) logger.log("You must enter a message to say.", LogLevel.ERROR, true);
+                    String message = String.join(" ", args);
 
-                // Bye bye :)
-                System.out.println("Thanks for using JARCraftinator :)");
-                System.exit(0);
-            } else if (command.equalsIgnoreCase("reload")) {
-                logger.log("Reloading...");
-                try {
-                    config.loadConfig();
-                } catch (FileNotFoundException ex) {
-                    logger.log("Unable to find configuration file!", LogLevel.CRITICAL);
-                    System.exit(1);
-                }
-                logger.log("Reload complete!");
-            } else {
-                logger.log("Unknown command.");
+                    JSONObject chatComponent = new JSONObject();
+                    chatComponent.add("text", "Console: " + message);
+                    chatComponent.add("color", "gray");
+                    chatComponent.add("italic", true);
+
+                    PacketPlayOutChat chatOut = new PacketPlayOutChat(
+                            chatComponent.toString(),
+                            // Console messages should be considered system messages.
+                            // Maybe allow users to turn this off in console?
+                            PacketPlayOutChat.PacketPlayOutChatPosition.SYSTEM_MESSAGE
+                    );
+
+                    for(PlayerConnection connection : getConnectionHandler().getAllPlayerConnections()){
+                        try {
+                            chatOut.send(connection.getOut());
+                        }catch(Exception ex){
+                            logger.log("Failed to send message.", LogLevel.ERROR);
+                            break;
+                        }
+                    }
+
+                    logger.log("[Console] " + message, LogLevel.CHAT, true);
+
+                    break;
+
+                case "reload":
+                    logger.log("Reloading...");
+                    try {
+                        config.loadConfig();
+                    } catch (FileNotFoundException ex) {
+                        logger.log("Unable to find configuration file!", LogLevel.CRITICAL);
+                        System.exit(1);
+                    }
+                    logger.log("Reload complete!");
+                    break;
+
+                case "stop":
+                    // End the timer
+                    logger.log("Closing scheduler...");
+                    timer.cancel();
+
+                    // Stop the server
+                    logger.log("Stopping server...");
+                    running = false;
+
+                    // Close the ANSI console
+                    logger.destroy();
+
+                    // Bye bye :)
+                    System.out.println("Thanks for using JARCraftinator!");
+                    System.exit(0);
+                    break;
+
+                default:
+                    logger.log("Unknown command.");
             }
         }
     }
@@ -137,7 +186,7 @@ public class JARCraftinator {
         return instance.configManager;
     }
 
-    public static Logger getLogger() {
+    public static JARCraftinatorLogger getLogger() {
         return instance.logger;
     }
 

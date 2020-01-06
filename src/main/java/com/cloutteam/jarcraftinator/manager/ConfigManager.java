@@ -14,6 +14,7 @@ public class ConfigManager {
     private int maxPlayers;
     private String motd;
     private String favicon;
+    private boolean logChatMessages;
 
     public ConfigManager(FileConfiguration config) {
         this.config = config;
@@ -28,6 +29,7 @@ public class ConfigManager {
         favicon = config.getString("pinger.favicon", "");
         stripAnsiEscape = config.getBoolean("logging.strip-ansi-escape");
         debug = config.getBoolean("logging.debug");
+        logChatMessages = config.getBoolean("logging.log-chat-messages", true);
     }
 
     public boolean isOnlineMode() {
@@ -36,7 +38,9 @@ public class ConfigManager {
 
     public boolean isStripAnsiEscape() {  return stripAnsiEscape; }
 
-    public boolean isDebug() {  return debug; }
+    public boolean isDebug() {
+        return debug;
+    }
 
     public int getPort() {
         return port;
@@ -53,4 +57,9 @@ public class ConfigManager {
     public String getFavicon() {
         return favicon;
     }
+
+    public boolean shouldLogChatMessages() {
+        return logChatMessages;
+    }
+
 }

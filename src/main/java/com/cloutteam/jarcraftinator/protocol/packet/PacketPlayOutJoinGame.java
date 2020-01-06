@@ -31,7 +31,7 @@ public class PacketPlayOutJoinGame extends PacketOut {
 
     @Override
     public void send(DataOutputStream out) throws IOException {
-        byte[] packetId = VarData.getVarInt(0x23);
+        byte[] packetId = VarData.getVarInt(MinecraftPacket.PLAY.JOIN_GAME.out);
         byte[] levelType = VarData.packString(this.levelType.getId());
         VarData.writeVarInt(out, 12 + levelType.length + packetId.length);
         out.write(packetId);

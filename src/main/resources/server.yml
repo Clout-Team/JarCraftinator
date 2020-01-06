@@ -19,3 +19,5 @@ logging:
   # Whether or not ANSI escape codes should be stripped from the file. (Logs are easier to read when on but you may
   # want to turn this off for a web-based panel or color-enabled log viewer)
   strip-ansi-escape: true
+  # Whether or not chat messages should be logged.
+  log-chat-messages: true

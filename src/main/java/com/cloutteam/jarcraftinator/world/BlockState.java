@@ -9,7 +9,7 @@ public class BlockState {
 
     public int getMetadata() {
         // For testing proposes
-        return 1;
+        return 6;
     }
 
 }
