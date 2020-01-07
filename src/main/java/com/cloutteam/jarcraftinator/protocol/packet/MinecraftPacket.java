@@ -1,6 +1,19 @@
 package com.cloutteam.jarcraftinator.protocol.packet;
 
+import com.cloutteam.jarcraftinator.JARCraftinator;
+import com.cloutteam.jarcraftinator.protocol.MinecraftVersion;
+import com.cloutteam.jarcraftinator.protocol.PlayStatePacket;
+
+import lombok.Getter;
+
 public class MinecraftPacket {
+	
+	@Getter
+	private PlayStatePacket PLAY;
+	
+	public MinecraftPacket() {
+		PLAY = new PlayStatePacket();
+	}
 
     public class HANDSHAKE {
 
@@ -28,6 +41,7 @@ public class MinecraftPacket {
 
     }
 
+    @Getter
     public class PLAY {
 
         public class TELEPORT_CONFIRM {
@@ -58,11 +72,13 @@ public class MinecraftPacket {
         }
 
         public class JOIN_GAME {
-            public static final int out = 0x23;
+            public static final short out = 0x25;
         }
 
+        // 1.15.1 =  0x45
+        // Lower is 0x46?
         public class SPAWN_POSITION {
-            public static final int out = 0x46;
+            public final int out = (JARCraftinator.protocolVersion == MinecraftVersion.v1_15_1 ? 0x45 : 0x46);
         }
 
     }

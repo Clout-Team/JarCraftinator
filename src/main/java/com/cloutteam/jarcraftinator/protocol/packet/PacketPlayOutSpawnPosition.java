@@ -1,5 +1,6 @@
 package com.cloutteam.jarcraftinator.protocol.packet;
 
+import com.cloutteam.jarcraftinator.JARCraftinator;
 import com.cloutteam.jarcraftinator.utils.VarData;
 
 import java.io.DataOutputStream;
@@ -43,10 +44,10 @@ public class PacketPlayOutSpawnPosition extends PacketOut {
 
     @Override
     public void send(DataOutputStream out) throws IOException {
-        byte[] packetId = VarData.getVarInt(MinecraftPacket.PLAY.SPAWN_POSITION.out);
-        VarData.writeVarInt(out, packetId.length + 8);
+        byte[] packetId = VarData.getVarInt(JARCraftinator.getINSTANCE().getMinecraftPacket().getPLAY().getSPAWN_POSITION().out);
+        VarData.writeVarInt(out, packetId.length + 4);
         out.write(packetId);
-        VarData.writePosition(out, x, y, z);
+        VarData.writePosition(out, 0, 0, 0);
         out.flush();
     }
 }

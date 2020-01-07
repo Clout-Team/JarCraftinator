@@ -2,7 +2,7 @@ package com.cloutteam.jarcraftinator.plugin;
 
 import com.cloutteam.jarcraftinator.exceptions.PluginUnloadedException;
 import com.cloutteam.jarcraftinator.plugin.api.VerdigrisPluginBase;
-import com.samjakob.verdigris.test.TestPlugin;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +16,8 @@ public class PluginManager {
 
 
         // TODO: Auto-load plugins
-        load(new TestPlugin());
-        enable(new TestPlugin());
+        //load(new TestPlugin());
+        //enable(new TestPlugin());
     }
 
     public void load(VerdigrisPluginBase plugin){
