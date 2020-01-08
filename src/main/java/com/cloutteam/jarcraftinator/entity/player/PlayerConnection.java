@@ -229,25 +229,24 @@ public class PlayerConnection extends Thread {
 							if (loggedIn)
 								break;
 							loggedIn = true;
-							JARCraftinator.getLogger().log("Player's locale: " + clientSettings.getLocale(),
-									LogLevel.DEBUG);
+							System.out.println("Player's locale: " + clientSettings.getLocale());
 							new PacketPlayOutPlayerPositionAndLook(player.getLocation().getX(),
 									player.getLocation().getY(), player.getLocation().getZ(),
 									player.getLocation().getYaw(), player.getLocation().getPitch(), (byte) 0, // flags
 									new Teleport(player, null, player.getLocation(), Teleport.TeleportCause.LOGIN)
 											.getId()).send(out);
 
-							int chunkX = (int) Math.floor(player.getLocation().getX() / 16);
-							int chunkZ = (int) Math.floor(player.getLocation().getZ() / 16);
-							for (int x = chunkX - clientSettings.getViewDistance(); x < chunkX
-									+ clientSettings.getViewDistance(); x++)
-								for (int z = chunkZ - clientSettings.getViewDistance(); z < chunkZ
-										+ clientSettings.getViewDistance(); z++)
-									new PacketPlayOutChunkData(new Chunk(player.getLocation().getWorld(), x, z))
-											.send(out);
-
+							//int chunkX = (int) Math.floor(player.getLocation().getX() / 16);
+							//int chunkZ = (int) Math.floor(player.getLocation().getZ() / 16);
+							//for (int x = chunkX - clientSettings.getViewDistance(); x < chunkX
+							//		+ clientSettings.getViewDistance(); x++)
+							//	for (int z = chunkZ - clientSettings.getViewDistance(); z < chunkZ
+							//			+ clientSettings.getViewDistance(); z++)
+							//		new PacketPlayOutChunkData(new Chunk(player.getLocation().getWorld(), x, z))
+							//				.send(out);
+							//
 							// Start the KeepAlive runnable!
-							new PlayerKeepAlive(this);
+							//new PlayerKeepAlive(this);
 						} catch (IOException ex) {
 							JARCraftinator.getLogger().log(
 									"Error whilst handling client settings packet (" + ex.getMessage() + ")",

@@ -96,7 +96,7 @@ public class VarData {
     public static void writeChunkDataPacket(Chunk chunk, DataOutputStream data) throws IOException {
         data.writeInt(chunk.getX());
         data.writeInt(chunk.getZ());
-        data.writeBoolean(true);
+        data.writeBoolean(false);
 
         int mask = 0;
         ByteArrayOutputStream columnBufferByteArray = new ByteArrayOutputStream();
