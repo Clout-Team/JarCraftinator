@@ -29,5 +29,6 @@ public class PacketStatusOutPong extends PacketOut {
         VarData.writeVarInt(out, MinecraftPacket.STATUS.PONG);
         out.writeLong(data);
         out.flush();
+        System.out.println("PacketStatusOutPong");
     }
 }

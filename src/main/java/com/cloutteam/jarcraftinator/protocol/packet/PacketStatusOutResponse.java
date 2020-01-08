@@ -161,5 +161,6 @@ public class PacketStatusOutResponse extends PacketOut {
         out.write(dataLength);
         out.writeBytes(responseText);
         out.flush();
+        System.out.println("PacketStatusOutResponse");
     }
 }

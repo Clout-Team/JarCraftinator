@@ -106,5 +106,6 @@ public class PacketPlayOutPlayerPositionAndLook extends PacketOut {
         out.writeByte(flags);
         out.write(teleportID);
         out.flush();
+        System.out.println("PacketPlayOutPlayerPositionAndLook");
     }
 }

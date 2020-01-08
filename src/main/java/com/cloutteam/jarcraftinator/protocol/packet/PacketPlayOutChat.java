@@ -40,6 +40,7 @@ public class PacketPlayOutChat extends PacketOut {
         out.write(packetId);
         out.write(packetData.toByteArray());
         out.flush();
+        System.out.println("PacketPlayOutChat");
 
     }
 

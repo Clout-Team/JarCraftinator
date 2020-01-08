@@ -153,6 +153,7 @@ public class PlayerConnection extends Thread {
 										+ socket.getPort() + " with UUID " + uuid.toString() + ".");
 						JARCraftinator.getLogger().log(username + " has spawned on the server at (" + spawnPacket.getX()
 								+ ", " + spawnPacket.getY() + ", " + spawnPacket.getZ() + ").");
+						System.out.println("Connection State: "+connectionState);
 						break;
 					case 0x01:
 						// TODO encryption response
@@ -274,8 +275,7 @@ public class PlayerConnection extends Thread {
 						}
 						break;
 					default:
-						// JARCraftinator.getLogger().log("Unknown packet ID: " +
-						// Integer.toHexString(packetId), LogLevel.DEBUG);
+						System.out.println("Unknown packet ID: 0x" +Integer.toHexString(packetId));
 
 						try {
 							for (packetLength -= VarData.getVarInt(packetId).length; packetLength > 0; packetLength--)

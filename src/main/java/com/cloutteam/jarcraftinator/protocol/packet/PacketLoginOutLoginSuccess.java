@@ -24,13 +24,14 @@ public class PacketLoginOutLoginSuccess extends PacketOut{
         byte[] uuid = VarData.packString(this.uuid.toString());
         byte[] username = VarData.packString(this.username);
 
-        JARCraftinator.getLogger().log("UUID: " + this.uuid.toString(), LogLevel.DEBUG);
-        JARCraftinator.getLogger().log("Username: " + this.username, LogLevel.DEBUG);
+        System.out.println("UUID: " + this.uuid.toString());
+        System.out.println("Username: " + this.username);
 
         VarData.writeVarInt(out, packetId.length + uuid.length + username.length);
         out.write(packetId);
         out.write(uuid);
         out.write(username);
         out.flush();
+        System.out.println("PacketLoginOutLoginSuccess");
     }
 }
