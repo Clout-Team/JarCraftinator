@@ -49,7 +49,7 @@ public class MinecraftPacket {
         }
 
         public class CLIENT_SETTINGS {
-            public static final int in = 0x04;
+            public static final int in = 0x05;
         }
 
         public class KEEP_ALIVE {
@@ -63,8 +63,8 @@ public class MinecraftPacket {
         }
 
         public class PLAYER_POSITION_AND_LOOK {
-            public static final int in = 0x0E;
-            public static final int out = 0x2F;
+            public static final int in = 0x12;
+            public static final int out = 0x12;
         }
 
         public class CHUNK_DATA {

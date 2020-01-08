@@ -41,7 +41,7 @@ public class PacketPlayOutJoinGame extends PacketOut {
         //out.writeByte(difficulty.getId());
         out.writeByte(maxPlayers);
         out.write(levelType);
-        out.writeBoolean(reducedDebug);
+        out.writeBoolean(false);
         out.flush();
     }
 }

@@ -20,8 +20,9 @@ public class PacketDirection {
 		this.sizeOffset = sizeOffset;
 	}
 	
-	public PacketDirection(boolean isOut, int out) {
+	public PacketDirection(boolean isOut, int out, int sizeOffset) {
 		this.out = out;
+		this.sizeOffset = sizeOffset;
 	}
 
 }

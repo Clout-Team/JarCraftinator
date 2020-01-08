@@ -65,7 +65,10 @@ public class PlayerConnection extends Thread {
 			try {
 				int packetLength = VarData.readVarInt(in);
 				int packetId = VarData.readVarInt(in);
+				
+				System.out.println("Got Packet: "+packetId);
 
+				System.out.println("Connection: "+connectionState);
 				switch (connectionState) {
 				case HANDSHAKE:
 					switch (packetId) {
