@@ -34,7 +34,8 @@ public enum MinecraftVersion {
     v1_12_1("1.12.1", 338),
     v1_12_2("1.12.2", 340),
 	v1_14_4("1.14.4", 498),
-	v1_15_1("1.15.1", 575);
+	v1_15_1("1.15.1", 575),
+    v1_15_2("1.15.2", 578);
 
     private final String name;
     private final int protocol;

@@ -29,7 +29,7 @@ public class JARCraftinator {
 
 	@Getter
 	@Setter
-	public static MinecraftVersion protocolVersion = MinecraftVersion.v1_15_1;
+	public static MinecraftVersion protocolVersion = MinecraftVersion.v1_15_2;
 	@Getter
 	private static JARCraftinator INSTANCE;
 	@Getter
