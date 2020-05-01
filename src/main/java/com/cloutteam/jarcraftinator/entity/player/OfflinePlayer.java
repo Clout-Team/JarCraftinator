@@ -24,7 +24,7 @@ public class OfflinePlayer extends Entity {
     }
 
     public UUID getUUID() {
-        return JARCraftinator.getConfig().isOnlineMode() ? onlineUUID : offlineUUID;
+        return JARCraftinator.getINSTANCE().getConfigManager().isOnlineMode() ? onlineUUID : offlineUUID;
     }
 
     public UUID getOnlineUUID() {

@@ -7,7 +7,7 @@ import java.util.UUID;
 public class UUIDManager {
 
     public static UUID getUUID(String username) {
-        if (JARCraftinator.getConfig().isOnlineMode()) {
+        if (JARCraftinator.getINSTANCE().getConfigManager().isOnlineMode()) {
             return null;
         } else {
             //For now, we'll use offline UUIDs. Online mode will be implemented later.

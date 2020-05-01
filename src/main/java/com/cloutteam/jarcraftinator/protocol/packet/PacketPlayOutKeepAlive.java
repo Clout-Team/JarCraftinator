@@ -14,6 +14,7 @@ public class PacketPlayOutKeepAlive extends PacketOut {
         VarData.writeVarInt(out, 8 + packetId.length);
         out.write(packetId);
         out.writeLong(System.currentTimeMillis());
+        System.out.println("PacketPlayOutKeepAlive");
     }
 
 }

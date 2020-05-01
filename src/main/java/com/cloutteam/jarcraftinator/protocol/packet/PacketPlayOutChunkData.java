@@ -23,7 +23,7 @@ public class PacketPlayOutChunkData extends PacketOut {
             VarData.writeChunkDataPacket(chunk, chunkStream);
 
             // Send actual packet
-            VarData.writeVarInt(out, byteArrayOutputStream.size());
+            VarData.writeVarInt(out, byteArrayOutputStream.size()-7);
             out.write(byteArrayOutputStream.toByteArray());
             out.flush();
     }

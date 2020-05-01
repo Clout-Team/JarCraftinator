@@ -8,6 +8,8 @@ import com.cloutteam.jarcraftinator.world.LevelType;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public class PacketPlayOutJoinGame extends PacketOut {
 
@@ -32,16 +34,47 @@ public class PacketPlayOutJoinGame extends PacketOut {
     @Override
     public void send(DataOutputStream out) throws IOException {
         byte[] packetId = VarData.getVarInt(MinecraftPacket.PLAY.JOIN_GAME.out);
+        byte[] viewDistance = VarData.getVarInt(16);
         byte[] levelType = VarData.packString(this.levelType.getId());
-        VarData.writeVarInt(out, 12 + levelType.length + packetId.length);
+        
+        // 1.15.1
+        // EXAMPLE SEED: -962639596097062
+        // Hash: 2c9b9c694154884c7e71292b61248b4d6bf88322bf1e6236d889844afea1b211
+        byte[] bytes = {32, 63, 39, 62, 39, 63, 36, 39};
+        
+        
+        
+        long test = bytesToLong(bytes);
+        System.out.println("Bytes: "+test);
+        
+        VarData.writeVarInt(out, levelType.length + packetId.length+ bytes.length+13);
         out.write(packetId);
+        
         out.writeInt(entityID);
         out.writeByte(gamemode.getId());
         out.writeInt(dimensionType.getId());
-        out.writeByte(difficulty.getId());
+        
+
+        out.writeLong(test);
+
+        
+        // Not needed in 1.15.1
+        //out.writeByte(difficulty.getId());
         out.writeByte(maxPlayers);
         out.write(levelType);
-        out.writeBoolean(reducedDebug);
+        out.write(viewDistance);
+        out.writeBoolean(false);
+        out.writeBoolean(false);
         out.flush();
+        System.out.println("PacketPlayOutJoinGame");
     }
+    
+    public long bytesToLong(byte[] bytes) {
+        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+        buffer.put(bytes);
+        buffer.flip();//need flip 
+        return buffer.getLong();
+    }
+    
+    
 }
