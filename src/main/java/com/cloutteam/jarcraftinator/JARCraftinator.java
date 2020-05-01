@@ -77,8 +77,7 @@ public class JARCraftinator {
 	public void run() {
 		System.out.println(
 				"Welcome to JARCraftinator v" + getServerVersion() + " (Minecraft " + protocolVersion.getName() + ").");
-		System.out.println("JARCraftinator is a Clout Team project");
-		System.out.println("https://wwww.clout-team.com/");
+		System.out.println("JARCraftinator was a Clout Team project");
 		System.out.println();
 		System.out.println("Loading logger...");
 		logger = new JARCraftinatorLogger();
