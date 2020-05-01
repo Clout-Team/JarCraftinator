@@ -3,6 +3,11 @@
 JARCraftinator (soon to be christened Verdigris) is a Minecraft server software written from scratch (no more NMS wrappers!)
 
 ## Development
+### Setup
+1. Install IntelliJ IDEA
+2. Install Lombok extension
+3. Profit!
+
 ### Basic Game Features
 These are roughly in the order in which we will work on the code base, although we may make some changes.  
 :heavy_check_mark: = Completed | :hourglass_flowing_sand: = In Development
